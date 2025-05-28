@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "cy:open": "cypress open"
+    "cy:open": "cypress open",
+    "spec:test1": "cypress run --spec cypress/e2e/test1/*.cy.js",
+    "spec:test2": "cypress run --spec cypress/e2e/test2/*.cy.js",
+    "spec:test3": "cypress run --spec cypress/e2e/test3/*.cy.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
