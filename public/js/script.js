@@ -27,4 +27,26 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
   });
+
+  // Add event listeners for Result buttons in executed commands
+  document.querySelectorAll('.show-result-command').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const command = btn.getAttribute('data-command');
+      fetch(`/result/log/${encodeURIComponent(command)}`)
+        .then(response => response.json())
+        .then(data => {
+          // Display result in the third column
+          const resultCol = document.querySelector('.column-3');
+          if (resultCol) {
+            resultCol.innerHTML = `<h2>Result for ${command}</h2><pre style="white-space: pre-wrap;">${data.result}</pre>`;
+          }
+        })
+        .catch(err => {
+          const resultCol = document.querySelector('.column-3');
+          if (resultCol) {
+            resultCol.innerHTML = `<h2>Result for ${command}</h2><pre>Error loading result: ${err}</pre>`;
+          }
+        });
+    });
+  });
 });
