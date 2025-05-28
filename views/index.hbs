@@ -13,29 +13,21 @@
   </div>
   <!-- Second column: 1/4 width -->
   <div class="column column-2">
-    <h2>Second Column</h2>
+    <h2>Executed Commands</h2>
     <ul class="custom-list">
-      <li class="custom-list-item">
-        <span>Item A</span>
-        <span>
-          <button>Accept</button>
-          <button class="ml-4">Decline</button>
+      {{#if executedCommands.length}}
+        {{#each executedCommands}}
+        <li class="custom-list-item">
+          <span>{{this}}</span>
+          <span>
+            <button>Accept</button>
+            <button class="ml-4">Decline</button>
         </span>
-      </li>
-      <li class="custom-list-item">
-        <span>Item B</span>
-        <span>
-          <button>Accept</button>
-          <button class="ml-4">Decline</button>
-        </span>
-      </li>
-      <li class="custom-list-item">
-        <span>Item C</span>
-        <span>
-          <button>Accept</button>
-          <button class="ml-4">Decline</button>
-        </span>
-      </li>
+        </li>
+        {{/each}}
+      {{else}}
+        <li class="custom-list-item"><span>No commands executed yet.</span></li>
+      {{/if}}
     </ul>
   </div>
   <!-- Third column: 2/4 width -->
