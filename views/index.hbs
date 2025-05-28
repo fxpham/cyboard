@@ -6,7 +6,7 @@
       {{#each specCommands}}
       <li class="custom-list-item">
         <span>{{this}}</span>
-        <button onclick="navigator.clipboard.writeText('npm run {{this}}')">Copy</button>
+        <button class="run-spec-command" data-command="{{this}}">Run</button>
       </li>
       {{/each}}
     </ul>
