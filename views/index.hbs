@@ -3,18 +3,12 @@
   <div class="column column-1">
     <h2>First Column</h2>
     <ul class="custom-list">
+      {{#each specCommands}}
       <li class="custom-list-item">
-        <span>Item 1</span>
-        <button>Action</button>
+        <span>{{this}}</span>
+        <button onclick="navigator.clipboard.writeText('npm run {{this}}')">Copy</button>
       </li>
-      <li class="custom-list-item">
-        <span>Item 2</span>
-        <button>Action</button>
-      </li>
-      <li class="custom-list-item">
-        <span>Item 3</span>
-        <button>Action</button>
-      </li>
+      {{/each}}
     </ul>
   </div>
   <!-- Second column: 1/4 width -->
