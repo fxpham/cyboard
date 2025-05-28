@@ -6,3 +6,38 @@ body {
 a {
   color: #00B7FF;
 }
+
+/* Custom columns layout */
+.custom-columns {
+  display: flex;
+  width: 100%;
+  gap: 16px;
+}
+.column {
+  border: 1px solid #ccc;
+  padding: 16px;
+  background: #fff;
+}
+.column-1, .column-2 {
+  flex: 1;
+}
+.column-3 {
+  flex: 2;
+}
+.custom-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.custom-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.custom-list-item:last-child {
+  margin-bottom: 0;
+}
+.ml-4 {
+  margin-left: 4px;
+}
