@@ -1,6 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
+const fs = require('fs');
+
+const logDir = path.join(__dirname, '../public/logs');
+const screenshotDir = path.join(__dirname, '../public/screenshot');
+const screenshotSrc = path.join(__dirname, '../cypress', 'screenshots');
+
+function ensureDirSync(dirPath) {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+}
 
 // Parse package.json to get scripts
 const packageJson = require('../package.json');
@@ -22,19 +33,32 @@ router.post('/execute/:command', function(req, res, next) {
 });
 
 function executeCommand(command) {
-  const logDir = path.join(__dirname, '../public/logs');
-  if (!require('fs').existsSync(logDir)) {
-    require('fs').mkdirSync(logDir, { recursive: true });
-  }
+  ensureDirSync(logDir);
+  ensureDirSync(screenshotDir);
+
   const logFileName = command.replace(/:/g, '_') + '.log';
   const logFile = path.join(logDir, logFileName);
+
+  const screenshotDes = path.join(screenshotDir, command.replace(/:/g, '_'));
+
   return new Promise((resolve, reject) => {
     const { exec } = require('child_process');
     exec(`npm run ${command} > "${logFile}"`, (error, stdout, stderr) => {
       if (error) {
         return reject(error);
       }
-      resolve({ stdout, stderr });
+      // Remove destination screenshot folder if it exists, then move
+      exec(`rm -rf ${screenshotDes}`, (err) => {
+        if (err) {
+          return reject(err);
+        }
+        exec(`mv ${screenshotSrc} ${screenshotDes}`, (err) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve({ stdout, stderr });
+        });
+      });
     });
   });
 }
