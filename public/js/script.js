@@ -49,4 +49,31 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
   });
+
+  // Add event listeners for Screenshot buttons in executed commands
+  document.querySelectorAll('.show-screenshot-command').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const command = btn.getAttribute('data-command');
+      fetch(`/result/screenshot/${encodeURIComponent(command)}`)
+        .then(response => response.json())
+        .then(data => {
+          // Display screenshots in the third column
+          const resultCol = document.querySelector('.column-3');
+          if (resultCol) {
+            if (data.images && data.images.length > 0) {
+              resultCol.innerHTML = `<h2>Screenshots for ${command}</h2>` +
+                data.images.map(img => `<img src="${img}" alt="screenshot" style="max-width:100%;margin-bottom:8px;" />`).join('');
+            } else {
+              resultCol.innerHTML = `<h2>Screenshots for ${command}</h2><p>No screenshots found.</p>`;
+            }
+          }
+        })
+        .catch(err => {
+          const resultCol = document.querySelector('.column-3');
+          if (resultCol) {
+            resultCol.innerHTML = `<h2>Screenshots for ${command}</h2><pre>Error loading screenshots: ${err}</pre>`;
+          }
+        });
+    });
+  });
 });
