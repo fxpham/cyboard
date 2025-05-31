@@ -78,12 +78,14 @@ document.addEventListener('DOMContentLoaded', function () {
           const resultCol = document.querySelector('.column-3');
           if (resultCol) {
             if (data.images && data.images.length > 0) {
-              // Build grid of thumbnails (8 per row)
+              // Build grid of thumbnails (6 per row)
               let grid = '<div id="screenshot-gallery-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;">' +
                 data.images.map((img, idx) =>
                   `<img src="${img}" alt="screenshot" class="screenshot-thumb" data-idx="${idx}" style="height:240px;width:auto;cursor:pointer;border:2px solid #ccc;object-fit:cover;max-width:100%;" />`
                 ).join('') + '</div>';
-              resultCol.innerHTML = `<h2>Screenshots for ${command}</h2>${grid}`;
+              // Add Download button
+              let downloadBtn = `<a href="/result/screenshot/${encodeURIComponent(command)}/download" class="download-screenshot-btn" style="display:inline-block;margin:12px 0 16px 0;padding:8px 18px;background:#007bff;color:#fff;border-radius:4px;text-decoration:none;" download>Download All as ZIP</a>`;
+              resultCol.innerHTML = `<h2>Screenshots for ${command}</h2>${downloadBtn}${grid}`;
               // Modal HTML (hidden by default)
               let modal = document.createElement('div');
               modal.id = 'screenshot-modal';

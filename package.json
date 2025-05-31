@@ -10,6 +10,7 @@
     "spec:test3": "cypress run --spec cypress/e2e/test3/*.cy.js"
   },
   "dependencies": {
+    "archiver": "^7.0.1",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
