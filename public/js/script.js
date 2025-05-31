@@ -60,27 +60,40 @@ document.addEventListener('DOMContentLoaded', function () {
           const resultCol = document.querySelector('.column-3');
           if (resultCol) {
             if (data.images && data.images.length > 0) {
-              // Build gallery thumbnails
-              let thumbnails = data.images.map((img, idx) =>
-                `<img src="${img}" alt="screenshot" class="screenshot-thumb${idx === 0 ? ' active' : ''}" data-idx="${idx}" style="height:100px;width:auto;margin:0 8px 8px 0;cursor:pointer;border:2px solid #ccc;flex:0 0 auto;" />`
-              ).join('');
-              // Initial full image
-              let imgName = data.images[0].split('/').pop();
-              let fullImg = `<div id="screenshot-img-name" style="text-align:center;font-weight:bold;margin-bottom:8px;">${imgName}</div><img id="screenshot-full-img" src="${data.images[0]}" alt="screenshot" style="max-width:100%;display:block;margin:0 auto 8px auto;" />`;
-              resultCol.innerHTML = `<h2>Screenshots for ${command}</h2><div id="screenshot-gallery-thumbs" style="display:flex;flex-wrap:nowrap;overflow-x:auto;margin-bottom:12px;">${thumbnails}</div><div id="screenshot-gallery-full">${fullImg}</div>`;
+              // Build grid of thumbnails (8 per row)
+              let grid = '<div id="screenshot-gallery-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;">' +
+                data.images.map((img, idx) =>
+                  `<img src="${img}" alt="screenshot" class="screenshot-thumb" data-idx="${idx}" style="height:240px;width:auto;cursor:pointer;border:2px solid #ccc;object-fit:cover;max-width:100%;" />`
+                ).join('') + '</div>';
+              resultCol.innerHTML = `<h2>Screenshots for ${command}</h2>${grid}`;
+              // Modal HTML (hidden by default)
+              let modal = document.createElement('div');
+              modal.id = 'screenshot-modal';
+              modal.style = 'display:none;position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;';
+              modal.innerHTML = `<div id="screenshot-modal-content" style="background:#fff;padding:16px;border-radius:8px;max-width:90vw;max-height:90vh;display:flex;flex-direction:column;align-items:center;">
+                <div style="overflow:auto;max-width:80vw;max-height:80vh;">
+                  <img id="screenshot-modal-img" src="" alt="screenshot" style="max-width:100%;max-height:100%;display:block;margin-bottom:8px;" />
+                </div>
+                <div id="screenshot-modal-name" style="text-align:center;font-weight:bold;margin-bottom:8px;"></div>
+                <button id="screenshot-modal-close" style="padding:6px 18px;">Close</button>
+              </div>`;
+              document.body.appendChild(modal);
               // Add click event for thumbnails
               document.querySelectorAll('.screenshot-thumb').forEach(function (thumb) {
                 thumb.addEventListener('click', function () {
                   const idx = parseInt(thumb.getAttribute('data-idx'));
-                  const fullImgEl = document.getElementById('screenshot-full-img');
-                  const imgNameEl = document.getElementById('screenshot-img-name');
-                  fullImgEl.src = data.images[idx];
-                  imgNameEl.textContent = data.images[idx].split('/').pop();
-                  // Remove active from all, add to clicked
-                  document.querySelectorAll('.screenshot-thumb').forEach(t => t.classList.remove('active'));
-                  thumb.classList.add('active');
+                  document.getElementById('screenshot-modal-img').src = data.images[idx];
+                  document.getElementById('screenshot-modal-name').textContent = data.images[idx].split('/').pop();
+                  modal.style.display = 'flex';
                 });
               });
+              // Close modal on button click or background click
+              document.getElementById('screenshot-modal-close').onclick = function () {
+                modal.style.display = 'none';
+              };
+              modal.onclick = function (e) {
+                if (e.target === modal) modal.style.display = 'none';
+              };
             } else {
               resultCol.innerHTML = `<h2>Screenshots for ${command}</h2><p>No screenshots found.</p>`;
             }
