@@ -35,10 +35,21 @@ document.addEventListener('DOMContentLoaded', function () {
       fetch(`/result/log/${encodeURIComponent(command)}`)
         .then(response => response.json())
         .then(data => {
-          // Display result in the third column
+          // Display result in the third column with Detail button
           const resultCol = document.querySelector('.column-3');
           if (resultCol) {
-            resultCol.innerHTML = `<h2>Result for ${command}</h2><pre style="white-space: pre-wrap;">${data.result}</pre>`;
+            resultCol.innerHTML = `<h2>Result for ${command}</h2><pre style="white-space: pre-wrap;">${data.result}</pre><button id="show-detail-btn" style="margin-top:12px;">Detail</button><div id="detail-section" style="display:none;"></div>`;
+            document.getElementById('show-detail-btn').onclick = function () {
+              const detailSection = document.getElementById('detail-section');
+              if (detailSection.style.display === 'none') {
+                detailSection.style.display = 'block';
+                detailSection.innerHTML = `<h3>Detail</h3><pre style='white-space: pre-wrap;'>${data.detail}</pre>`;
+                this.textContent = 'Hide Detail';
+              } else {
+                detailSection.style.display = 'none';
+                this.textContent = 'Detail';
+              }
+            };
           }
         })
         .catch(err => {

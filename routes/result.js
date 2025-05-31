@@ -14,8 +14,8 @@ router.get('/log/:command', function(req, res, next) {
     if (err) {
       return res.status(404).json({ error: 'Log file not found.' });
     }
-    const result = data.split('(Run Finished)')[1];
-    res.json({ result: result });
+    const parts = data.split('(Run Finished)');
+    res.json({ result: parts[1] || '', detail: parts[0] || '' });
   });
 });
 
