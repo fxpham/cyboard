@@ -38,7 +38,14 @@ document.addEventListener('DOMContentLoaded', function () {
           // Display result in the third column with Detail button
           const resultCol = document.querySelector('.column-3');
           if (resultCol) {
-            resultCol.innerHTML = `<h2>Result for ${command}</h2><pre style="white-space: pre-wrap;">${data.result}</pre><button id="show-detail-btn" style="margin-top:12px;">Detail</button><div id="detail-section" style="display:none;"></div>`;
+            resultCol.innerHTML = `<h2>Result for ${command}</h2><pre id="result-content" style="white-space: pre-wrap;">${data.result}</pre><button id="copy-result-btn" style="margin-top:12px;margin-right:8px;">Copy Result</button><button id="show-detail-btn" style="margin-top:12px;">Detail</button><div id="detail-section" style="display:none;"></div>`;
+            document.getElementById('copy-result-btn').onclick = function () {
+              const text = document.getElementById('result-content').textContent;
+              navigator.clipboard.writeText(text).then(() => {
+                this.textContent = 'Copied!';
+                setTimeout(() => { this.textContent = 'Copy Result'; }, 1200);
+              });
+            };
             document.getElementById('show-detail-btn').onclick = function () {
               const detailSection = document.getElementById('detail-section');
               if (detailSection.style.display === 'none') {
