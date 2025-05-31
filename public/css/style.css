@@ -20,6 +20,10 @@ a {
 }
 .column-1, .column-2 {
   flex: 1;
+  min-width: 320px;;
+}
+.column-2 {
+  min-width: 400px;
 }
 .column-3 {
   flex: 2;
@@ -40,4 +44,9 @@ a {
 }
 .ml-4 {
   margin-left: 4px;
+}
+
+.screenshot-thumb.active {
+  border: 2px solid #007bff;
+  box-shadow: 0 0 0 2px #007bff33;
 }

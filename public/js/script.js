@@ -57,12 +57,30 @@ document.addEventListener('DOMContentLoaded', function () {
       fetch(`/result/screenshot/${encodeURIComponent(command)}`)
         .then(response => response.json())
         .then(data => {
-          // Display screenshots in the third column
           const resultCol = document.querySelector('.column-3');
           if (resultCol) {
             if (data.images && data.images.length > 0) {
-              resultCol.innerHTML = `<h2>Screenshots for ${command}</h2>` +
-                data.images.map(img => `<img src="${img}" alt="screenshot" style="max-width:100%;margin-bottom:8px;" />`).join('');
+              // Build gallery thumbnails
+              let thumbnails = data.images.map((img, idx) =>
+                `<img src="${img}" alt="screenshot" class="screenshot-thumb${idx === 0 ? ' active' : ''}" data-idx="${idx}" style="height:100px;width:auto;margin:0 8px 8px 0;cursor:pointer;border:2px solid #ccc;flex:0 0 auto;" />`
+              ).join('');
+              // Initial full image
+              let imgName = data.images[0].split('/').pop();
+              let fullImg = `<div id="screenshot-img-name" style="text-align:center;font-weight:bold;margin-bottom:8px;">${imgName}</div><img id="screenshot-full-img" src="${data.images[0]}" alt="screenshot" style="max-width:100%;display:block;margin:0 auto 8px auto;" />`;
+              resultCol.innerHTML = `<h2>Screenshots for ${command}</h2><div id="screenshot-gallery-thumbs" style="display:flex;flex-wrap:nowrap;overflow-x:auto;margin-bottom:12px;">${thumbnails}</div><div id="screenshot-gallery-full">${fullImg}</div>`;
+              // Add click event for thumbnails
+              document.querySelectorAll('.screenshot-thumb').forEach(function (thumb) {
+                thumb.addEventListener('click', function () {
+                  const idx = parseInt(thumb.getAttribute('data-idx'));
+                  const fullImgEl = document.getElementById('screenshot-full-img');
+                  const imgNameEl = document.getElementById('screenshot-img-name');
+                  fullImgEl.src = data.images[idx];
+                  imgNameEl.textContent = data.images[idx].split('/').pop();
+                  // Remove active from all, add to clicked
+                  document.querySelectorAll('.screenshot-thumb').forEach(t => t.classList.remove('active'));
+                  thumb.classList.add('active');
+                });
+              });
             } else {
               resultCol.innerHTML = `<h2>Screenshots for ${command}</h2><p>No screenshots found.</p>`;
             }
