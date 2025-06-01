@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
   updateProgressInfo();
-  setInterval(updateProgressInfo, 2000);
 
   function bindResultButtons() {
     document.querySelectorAll('.show-result-command').forEach(function (btn) {
@@ -142,6 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const command = btn.getAttribute('data-command');
       btn.disabled = true;
       btn.textContent = 'Running...';
+      updateProgressInfo();
       fetch(`/command/execute/${encodeURIComponent(command)}`, {
         method: 'POST',
         headers: {

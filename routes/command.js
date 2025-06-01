@@ -31,7 +31,7 @@ function processQueue() {
   executeCommand(command)
     .then(result => {
       isProcessing = false;
-      executedCount++;
+      commandQueue.length === 0 ? executedCount = 0 : executedCount++;
       currentCommand = null;
       resolve(result);
       processQueue();
