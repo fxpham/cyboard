@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
               if (data.result && data.result.trim() !== '') {
                 copyBtn = '<button id="copy-result-btn" style="margin-top:12px;margin-right:8px;">Copy Result</button>';
               }
-              resultCol.innerHTML = `<h3>${command}</h3><pre id="result-content" style="white-space: pre-wrap;">${data.result}</pre>${copyBtn}<button id="show-detail-btn" style="margin-top:12px;">Detail</button><div id="detail-section" style="display:none;"></div>`;
+              resultCol.innerHTML = `<h3>${command}</h3><p>${data.created}</p><pre id="result-content" style="white-space: pre-wrap;">${data.result}</pre>${copyBtn}<button id="show-detail-btn" style="margin-top:12px;">Detail</button><div id="detail-section" style="display:none;"></div>`;
               if (copyBtn) {
                 document.getElementById('copy-result-btn').onclick = function () {
                   const text = document.getElementById('result-content').textContent;

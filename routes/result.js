@@ -16,7 +16,16 @@ router.get('/log/:command', function(req, res, next) {
       return res.status(404).json({ error: 'Log file not found.' });
     }
     const parts = data.split('(Run Finished)');
-    res.json({ result: parts[1] || '', detail: parts[0] || '' });
+    // Get file created time
+    fs.stat(logFile, (err, stats) => {
+      let created = '';
+      if (!err && stats && stats.birthtime) {
+        const d = stats.birthtime;
+        const pad = n => n.toString().padStart(2, '0');
+        created = `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())} - ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+      }
+      res.json({ result: parts[1] || '', detail: parts[0] || '', created: created });
+    });
   });
 });
 
