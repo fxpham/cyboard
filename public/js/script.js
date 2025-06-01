@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Add event listeners for Screenshot buttons in executed commands
   document.querySelectorAll('.show-screenshot-command').forEach(function (btn) {
-    btn.addEventListener('click', function () {
+    btn.onclick = function () {
       const command = btn.getAttribute('data-command');
       fetch(`/result/screenshot/${encodeURIComponent(command)}`)
         .then(response => response.json())
@@ -78,6 +78,9 @@ document.addEventListener('DOMContentLoaded', function () {
           const resultCol = document.querySelector('.column-3');
           if (resultCol) {
             if (data.images && data.images.length > 0) {
+              // Remove any existing modal to prevent duplicates
+              const oldModal = document.getElementById('screenshot-modal');
+              if (oldModal) oldModal.remove();
               // Build grid of thumbnails (6 per row)
               let grid = '<div id="screenshot-gallery-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;">' +
                 data.images.map((img, idx) =>
@@ -98,14 +101,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 <button id="screenshot-modal-close" style="padding:6px 18px;">Close</button>
               </div>`;
               document.body.appendChild(modal);
-              // Add click event for thumbnails
+              // Add click event for thumbnails (re-bind every time)
               document.querySelectorAll('.screenshot-thumb').forEach(function (thumb) {
-                thumb.addEventListener('click', function () {
+                thumb.onclick = function () {
                   const idx = parseInt(thumb.getAttribute('data-idx'));
                   document.getElementById('screenshot-modal-img').src = data.images[idx];
                   document.getElementById('screenshot-modal-name').textContent = data.images[idx].split('/').pop();
                   modal.style.display = 'flex';
-                });
+                };
               });
               // Close modal on button click or background click
               document.getElementById('screenshot-modal-close').onclick = function () {
@@ -125,6 +128,6 @@ document.addEventListener('DOMContentLoaded', function () {
             resultCol.innerHTML = `<h2>Screenshots for ${command}</h2><pre>Error loading screenshots: ${err}</pre>`;
           }
         });
-    });
+    };
   });
 });
