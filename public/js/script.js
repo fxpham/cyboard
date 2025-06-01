@@ -20,21 +20,14 @@ document.addEventListener('DOMContentLoaded', function () {
   // Show progress info in the UI
   function updateProgressInfo() {
     fetch('/command/progress')
-      .then(res => res.json())
-      .then(data => {
-        let info = `Queue: ${data.queueLength} | Executed: ${data.executedCount}`;
-        if (data.running) {
-          info += ` | Running: ${data.running}`;
-        }
-        let el = document.getElementById('progress-info');
-        if (!el) {
-          el = document.createElement('div');
-          el.id = 'progress-info';
-          el.style = 'margin-bottom:16px;padding:8px 12px;background:#f5f5f5;border-radius:4px;font-weight:bold;';
-          document.querySelector('.custom-columns').prepend(el);
-        }
-        el.textContent = info;
-      });
+    .then(res => res.json())
+    .then(data => {
+      let info = `Executed: ${data.executedCount} | Queue: ${data.queueLength}`;
+      let progressRunning = document.getElementById('progress-running');
+      progressRunning.textContent = data.running ? `Running: ${data.running}` : '';
+      let progressStatus = document.getElementById('progress-status');
+      progressStatus.textContent = info;
+    });
   }
   updateProgressInfo();
 

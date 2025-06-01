@@ -2,6 +2,10 @@
   <!-- First column: 1/4 width -->
   <div class="column column-1">
     <h2>Commands</h2>
+    <div id="progress-info" style="margin-bottom:16px;background:#f5f5f5;font-weight:bold;">
+      <p><span id="progress-status"></span></p>
+      <p><span id="progress-running"></span></p>
+    </div>
     <ul class="custom-list">
       {{#each specCommands}}
       <li class="custom-list-item">
