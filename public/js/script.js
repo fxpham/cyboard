@@ -49,9 +49,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (resultCol) {
               let copyBtn = '';
               if (data.result && data.result.trim() !== '') {
-                copyBtn = '<button id="copy-result-btn" style="margin-top:12px;margin-right:8px;">Copy Result</button>';
+                copyBtn = '<button id="copy-result-btn" class="copy-result-btn">Copy Result</button>';
               }
-              resultCol.innerHTML = `<h3>${command}</h3><p>${data.created}</p><pre id="result-content" style="white-space: pre-wrap;">${data.result}</pre>${copyBtn}<button id="show-detail-btn" style="margin-top:12px;">Detail</button><div id="detail-section" style="display:none;"></div>`;
+              resultCol.innerHTML = `<h3>${command}</h3><p>${data.created}</p><pre id="result-content" class="result-content">${data.result}</pre>${copyBtn}<button id="show-detail-btn" class="show-detail-btn">Detail</button><div id="detail-section" class="detail-section" style="display:none;"></div>`;
               if (copyBtn) {
                 document.getElementById('copy-result-btn').onclick = function () {
                   const text = document.getElementById('result-content').textContent;
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const detailSection = document.getElementById('detail-section');
                 if (detailSection.style.display === 'none') {
                   detailSection.style.display = 'block';
-                  detailSection.innerHTML = `<h3>Detail</h3><pre style='white-space: pre-wrap;'>${data.detail}</pre>`;
+                  detailSection.innerHTML = `<h3>Detail</h3><pre class='detail-pre'>${data.detail}</pre>`;
                   this.textContent = 'Hide Detail';
                 } else {
                   detailSection.style.display = 'none';
@@ -96,21 +96,21 @@ document.addEventListener('DOMContentLoaded', function () {
               if (data.images && data.images.length > 0) {
                 const oldModal = document.getElementById('screenshot-modal');
                 if (oldModal) oldModal.remove();
-                let grid = '<div id="screenshot-gallery-grid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;">' +
+                let grid = '<div id="screenshot-gallery-grid" class="screenshot-gallery-grid">' +
                   data.images.map((img, idx) =>
-                    `<img src="${img}" alt="screenshot" class="screenshot-thumb" data-idx="${idx}" style="height:240px;width:auto;cursor:pointer;border:2px solid #ccc;object-fit:cover;max-width:100%;" />`
+                    `<img src="${img}" alt="screenshot" class="screenshot-thumb" data-idx="${idx}" />`
                   ).join('') + '</div>';
-                let downloadBtn = `<a href="/result/screenshot/${encodeURIComponent(command)}/download" class="download-screenshot-btn" style="display:inline-block;margin:12px 0 16px 0;padding:8px 18px;background:#007bff;color:#fff;border-radius:4px;text-decoration:none;" download>Download All as ZIP</a>`;
+                let downloadBtn = `<a href="/result/screenshot/${encodeURIComponent(command)}/download" class="download-screenshot-btn" download>Download All as ZIP</a>`;
                 resultCol.innerHTML = `<h2>Screenshots for ${command}</h2>${downloadBtn}${grid}`;
                 let modal = document.createElement('div');
                 modal.id = 'screenshot-modal';
-                modal.style = 'display:none;position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);justify-content:center;align-items:center;';
-                modal.innerHTML = `<div id="screenshot-modal-content" style="background:#fff;padding:16px;border-radius:8px;max-width:90vw;max-height:90vh;display:flex;flex-direction:column;align-items:center;">
-                  <div style="overflow:auto;max-width:80vw;max-height:80vh;">
-                    <img id="screenshot-modal-img" src="" alt="screenshot" style="max-width:100%;max-height:100%;display:block;margin-bottom:8px;" />
+                modal.className = 'screenshot-modal';
+                modal.innerHTML = `<div id="screenshot-modal-content" class="screenshot-modal-content">
+                  <div class="screenshot-modal-img-wrap">
+                    <img id="screenshot-modal-img" src="" alt="screenshot" class="screenshot-modal-img" />
                   </div>
-                  <div id="screenshot-modal-name" style="text-align:center;font-weight:bold;margin-bottom:8px;"></div>
-                  <button id="screenshot-modal-close" style="padding:6px 18px;">Close</button>
+                  <div id="screenshot-modal-name" class="screenshot-modal-name"></div>
+                  <button id="screenshot-modal-close" class="screenshot-modal-close">Close</button>
                 </div>`;
                 document.body.appendChild(modal);
                 document.querySelectorAll('.screenshot-thumb').forEach(function (thumb) {
