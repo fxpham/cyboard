@@ -38,9 +38,9 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`/result/log/${encodeURIComponent(command)}`)
           .then(response => response.json())
           .then(data => {
-            const resultCol = document.querySelector('.column-3');
+            const resultCol = document.getElementById('command-result');
             if (resultCol) {
-              resultCol.innerHTML = `<h2>Result for ${command}</h2><pre id="result-content" style="white-space: pre-wrap;">${data.result}</pre><button id="copy-result-btn" style="margin-top:12px;margin-right:8px;">Copy Result</button><button id="show-detail-btn" style="margin-top:12px;">Detail</button><div id="detail-section" style="display:none;"></div>`;
+              resultCol.innerHTML = `<h3>${command}</h3><pre id="result-content" style="white-space: pre-wrap;">${data.result}</pre><button id="copy-result-btn" style="margin-top:12px;margin-right:8px;">Copy Result</button><button id="show-detail-btn" style="margin-top:12px;">Detail</button><div id="detail-section" style="display:none;"></div>`;
               document.getElementById('copy-result-btn').onclick = function () {
                 const text = document.getElementById('result-content').textContent;
                 navigator.clipboard.writeText(text).then(() => {
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
           })
           .catch(err => {
-            const resultCol = document.querySelector('.column-3');
+            const resultCol = document.getElementById('command-result');
             if (resultCol) {
               resultCol.innerHTML = `<h2>Result for ${command}</h2><pre>Error loading result: ${err}</pre>`;
             }
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`/result/screenshot/${encodeURIComponent(command)}`)
           .then(response => response.json())
           .then(data => {
-            const resultCol = document.querySelector('.column-3');
+            const resultCol = document.getElementById('command-result');
             if (resultCol) {
               if (data.images && data.images.length > 0) {
                 const oldModal = document.getElementById('screenshot-modal');
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
           })
           .catch(err => {
-            const resultCol = document.querySelector('.column-3');
+            const resultCol = document.getElementById('command-result');
             if (resultCol) {
               resultCol.innerHTML = `<h2>Screenshots for ${command}</h2><pre>Error loading screenshots: ${err}</pre>`;
             }

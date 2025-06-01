@@ -12,21 +12,34 @@ a {
   display: flex;
   width: 100%;
   gap: 16px;
+  height: calc(100vh - 150px);
 }
 .column {
   border: 1px solid #ccc;
   padding: 16px;
   background: #fff;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 .column-1, .column-2 {
   flex: 1;
-  min-width: 320px;;
+  min-width: 320px;
+  min-height: 480px;
+  height: 100%;
 }
 .column-2 {
   min-width: 400px;
 }
 .column-3 {
   flex: 2;
+  min-height: 480px;
+  height: 100%;
+}
+#command-list, #executed-command-list, #command-result {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 .custom-list {
   list-style: none;

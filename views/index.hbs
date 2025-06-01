@@ -6,37 +6,43 @@
       <p><span id="progress-status"></span></p>
       <p><span id="progress-running"></span></p>
     </div>
-    <ul class="custom-list">
-      {{#each specCommands}}
-      <li class="custom-list-item">
-        <span>{{this}}</span>
-        <button class="run-spec-command" data-command="{{this}}">Run</button>
-      </li>
-      {{/each}}
-    </ul>
+    <div id="command-list">
+      <ul class="custom-list">
+        {{#each specCommands}}
+        <li class="custom-list-item">
+          <span>{{this}}</span>
+          <button class="run-spec-command" data-command="{{this}}">Run</button>
+        </li>
+        {{/each}}
+      </ul>
+    </div>
   </div>
   <!-- Second column: 1/4 width -->
   <div class="column column-2">
     <h2>Executed Commands</h2>
-    <ul class="custom-list">
-      {{#if executedCommands.length}}
-        {{#each executedCommands}}
-        <li class="custom-list-item">
-          <span>{{this}}</span>
-          <span>
-            <button class="show-result-command" data-command="{{this}}">Result</button>
-            <button class="ml-4 show-screenshot-command" data-command="{{this}}">Screenshot</button>
-          </span>
-        </li>
-        {{/each}}
-      {{else}}
-        <li class="custom-list-item"><span>No commands executed yet.</span></li>
-      {{/if}}
-    </ul>
+    <div id="executed-command-list">
+      <ul class="custom-list">
+        {{#if executedCommands.length}}
+          {{#each executedCommands}}
+          <li class="custom-list-item">
+            <span>{{this}}</span>
+            <span>
+              <button class="show-result-command" data-command="{{this}}">Result</button>
+              <button class="ml-4 show-screenshot-command" data-command="{{this}}">Screenshot</button>
+            </span>
+          </li>
+          {{/each}}
+        {{else}}
+          <li class="custom-list-item"><span>No commands executed yet.</span></li>
+        {{/if}}
+      </ul>
+    </div>
   </div>
   <!-- Third column: 2/4 width -->
   <div class="column column-3">
     <h2>Result</h2>
-    <p>Result of selected executed command will be displayed here.</p>
+    <div id="command-result">
+      <p class="result-placeholder">Select a executed command to see the result.</p>
+    </div>
   </div>
 </div>
