@@ -28,7 +28,7 @@ router.get('/', function(req, res, next) {
     // If error, leave executedCommands empty
   }
 
-  res.render('index', { title: 'Express', specCommands, executedCommands });
+  res.render('index', { title: 'Cyboard', specCommands, executedCommands });
 });
 
 module.exports = router;
