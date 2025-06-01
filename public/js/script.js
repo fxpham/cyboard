@@ -21,6 +21,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
           }
         }
+        const filterInput = document.getElementById('command-filter-input');
+        if (filterInput) {
+          filterInput.addEventListener('input', filterCommandList);
+        }
       });
   }
 
@@ -193,6 +197,23 @@ document.addEventListener('DOMContentLoaded', function () {
           alert('Failed to delete results: ' + err);
         });
     };
+  }
+
+  // Filter function for command list
+  function filterCommandList() {
+    const filter = document.getElementById('command-filter-input');
+    if (!filter) return;
+    const val = filter.value.toLowerCase();
+    document.querySelectorAll('#command-list .custom-list-item').forEach(function(item) {
+      const text = item.textContent.toLowerCase();
+      item.style.display = text.includes(val) ? '' : 'none';
+    });
+  }
+
+  // Bind filter input event
+  const filterInput = document.getElementById('command-filter-input');
+  if (filterInput) {
+    filterInput.addEventListener('input', filterCommandList);
   }
 
   bindResultButtons();

@@ -143,3 +143,12 @@ a {
 .screenshot-modal-close {
   padding: 6px 18px;
 }
+
+.command-filter-input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  box-sizing: border-box;
+}
