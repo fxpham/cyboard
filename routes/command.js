@@ -17,13 +17,38 @@ function ensureDirSync(dirPath) {
 const packageJson = require('../package.json');
 const commands = Object.keys(packageJson.scripts).filter((script) => script.startsWith('spec:')).sort();
 
+// Simple in-memory queue for command execution
+const commandQueue = [];
+let isProcessing = false;
+
+function processQueue() {
+  if (isProcessing || commandQueue.length === 0) return;
+  isProcessing = true;
+  const { command, resolve, reject } = commandQueue.shift();
+  executeCommand(command)
+    .then(result => {
+      isProcessing = false;
+      resolve(result);
+      processQueue();
+    })
+    .catch(error => {
+      isProcessing = false;
+      reject(error);
+      processQueue();
+    });
+}
+
 /* GET users listing. */
 router.post('/execute/:command', function(req, res, next) {
   const command = req.params.command;
   if (!commands.includes(command)) {
     return res.status(400).json({ error: 'Invalid command' });
   }
-  executeCommand(command)
+  // Add to queue and process
+  new Promise((resolve, reject) => {
+    commandQueue.push({ command, resolve, reject });
+    processQueue();
+  })
     .then(result => {
       res.json({ stdout: result.stdout, stderr: result.stderr });
     })
