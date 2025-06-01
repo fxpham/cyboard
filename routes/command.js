@@ -20,19 +20,25 @@ const commands = Object.keys(packageJson.scripts).filter((script) => script.star
 // Simple in-memory queue for command execution
 const commandQueue = [];
 let isProcessing = false;
+let executedCount = 0;
+let currentCommand = null;
 
 function processQueue() {
   if (isProcessing || commandQueue.length === 0) return;
   isProcessing = true;
   const { command, resolve, reject } = commandQueue.shift();
+  currentCommand = command;
   executeCommand(command)
     .then(result => {
       isProcessing = false;
+      executedCount++;
+      currentCommand = null;
       resolve(result);
       processQueue();
     })
     .catch(error => {
       isProcessing = false;
+      currentCommand = null;
       reject(error);
       processQueue();
     });
@@ -55,6 +61,14 @@ router.post('/execute/:command', function(req, res, next) {
     .catch(error => {
       res.status(500).json({ error: error.message });
     });
+});
+
+router.get('/progress', (req, res) => {
+  res.json({
+    queueLength: commandQueue.length,
+    executedCount,
+    running: isProcessing ? currentCommand : null
+  });
 });
 
 function executeCommand(command) {
