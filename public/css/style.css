@@ -74,9 +74,6 @@ a {
 .show-detail-btn {
   margin-top: 12px;
 }
-.detail-section {
-  /* display:none is set inline by JS for toggling */
-}
 .detail-pre {
   white-space: pre-wrap;
 }
@@ -151,4 +148,26 @@ a {
   border-radius: 4px;
   margin-bottom: 12px;
   box-sizing: border-box;
+}
+
+.progress-info {
+  margin-bottom: 16px;
+  background: #f5f5f5;
+  font-weight: bold;
+}
+.command-filter-wrap {
+  margin-bottom: 12px;
+}
+.result-actions {
+  margin-bottom: 16px;
+  background: #f5f5f5;
+}
+.delete-all-btn {
+  background: #dc3545;
+  color: #fff;
+  padding: 6px 16px;
+  margin: 9px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
