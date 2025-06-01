@@ -20,6 +20,9 @@
   <!-- Second column: 1/4 width -->
   <div class="column column-2">
     <h2>Executed Commands</h2>
+    <div id="result-actions" style="margin-bottom:16px;background:#f5f5f5">
+      <button id="delete-all-btn" style="background:#dc3545;color:#fff;padding:6px 16px;margin:9px;border:none;border-radius:4px;cursor:pointer;">Delete all</button>
+    </div>
     <div id="executed-command-list">
       <ul class="custom-list">
         {{#if executedCommands.length}}

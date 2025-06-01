@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', function () {
             bindScreenshotButtons();
             bindResultButtons();
           }
+          const col3 = document.querySelector('.column-3');
+          if (col3) {
+            const newResult = doc.querySelector('.column-3');
+            if (newResult) {
+              col3.innerHTML = newResult.innerHTML;
+            }
+          }
         }
       });
   }
@@ -160,6 +167,27 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
   });
+
+  // Handle Delete all button
+  const deleteAllBtn = document.getElementById('delete-all-btn');
+  if (deleteAllBtn) {
+    deleteAllBtn.onclick = function () {
+      if (!confirm('Are you sure you want to delete all results? This action cannot be undone.')) return;
+      fetch('/result/delete', { method: 'DELETE' })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert('All results deleted successfully.');
+            updateExecutedCommands();
+          } else {
+            alert('Failed to delete results: ' + (data.error || 'Unknown error'));
+          }
+        })
+        .catch(err => {
+          alert('Failed to delete results: ' + err);
+        });
+    };
+  }
 
   bindResultButtons();
   bindScreenshotButtons();
