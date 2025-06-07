@@ -13,7 +13,7 @@ function scanImages(folderPath) {
     return results;
   }
   const exts = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp'];
-  const resultsDir = path.resolve(process.cwd(), 'results');
+  const appDir = path.resolve(process.cwd());
 
   function walk(dir) {
     fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
@@ -22,7 +22,7 @@ function scanImages(folderPath) {
         walk(fullPath);
       } else if (exts.includes(path.extname(entry.name).toLowerCase())) {
         // Convert absolute path to web path
-        const rel = path.relative(resultsDir, fullPath).replace(/\\/g, '/');
+        const rel = path.relative(appDir, fullPath).replace(/\\/g, '/');
         results.push('/' + rel);
       }
     });
