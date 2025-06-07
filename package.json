@@ -1,14 +1,16 @@
 {
   "name": "cyboard",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "start": "node ./bin/www",
-    "cy:open": "cypress open",
-    "spec:test1": "cypress run --spec cypress/e2e/test1/*.cy.js",
-    "spec:test2": "cypress run --spec cypress/e2e/test2/*.cy.js",
-    "spec:test3": "cypress run --spec cypress/e2e/test3/*.cy.js"
+  "main": "./bin/www",
+  "bin": {
+    "cyboard": "./bin/www"
   },
+  "files": [
+    "app.js",
+    "bin/www",
+    "src/**"
+  ],
   "dependencies": {
     "archiver": "^7.0.1",
     "express": "~4.16.1",
@@ -16,7 +18,12 @@
     "http-errors": "~1.6.3"
   },
   "devDependencies": {
-    "cypress": "^14.4.0",
     "debug": "^4.4.1"
-  }
+  },
+  "keywords": [
+    "cyboard",
+    "cypress"
+  ],
+  "author": "fxpham",
+  "license": "MIT"
 }
