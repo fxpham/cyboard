@@ -8,13 +8,13 @@ const path = require('path');
  */
 function scanImages(folderPath) {
   let results = [];
-   // Return empty if directory does not exist
+  // Return empty if directory does not exist
   if (!fs.existsSync(folderPath)) {
     return results;
   }
-
   const exts = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp'];
-  const publicDir = path.resolve(__dirname, '../public');
+  const resultsDir = path.resolve(process.cwd(), 'results');
+
   function walk(dir) {
     fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
       const fullPath = path.join(dir, entry.name);
@@ -22,7 +22,7 @@ function scanImages(folderPath) {
         walk(fullPath);
       } else if (exts.includes(path.extname(entry.name).toLowerCase())) {
         // Convert absolute path to web path
-        const rel = path.relative(publicDir, fullPath).replace(/\\/g, '/');
+        const rel = path.relative(resultsDir, fullPath).replace(/\\/g, '/');
         results.push('/' + rel);
       }
     });

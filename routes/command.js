@@ -3,9 +3,9 @@ const router = express.Router();
 const path = require('path');
 const fs = require('fs');
 
-const logDir = path.join(__dirname, '../public/logs');
-const screenshotDir = path.join(__dirname, '../public/screenshot');
-const screenshotSrc = path.join(__dirname, '../cypress', 'screenshots');
+const logDir = path.join(process.cwd(), 'results/logs');
+const screenshotDir = path.join(process.cwd(), 'results/screenshots');
+const screenshotSrc = path.join(process.cwd(), 'cypress/screenshots');
 
 function ensureDirSync(dirPath) {
   if (!fs.existsSync(dirPath)) {
@@ -14,7 +14,7 @@ function ensureDirSync(dirPath) {
 }
 
 // Parse package.json to get scripts
-const packageJson = require('../package.json');
+const packageJson = require(path.join(process.cwd(), 'package.json'));
 const commands = Object.keys(packageJson.scripts).filter((script) => script.startsWith('spec:')).sort();
 
 // Simple in-memory queue for command execution

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
-const packageJson = require('../package.json');
+const packageJson = require(path.join(process.cwd(), 'package.json'));
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -15,7 +15,7 @@ router.get('/', function(req, res, next) {
   }
 
   // Get executed commands from log files in public/logs
-  const logsDir = path.join(__dirname, '../public/logs');
+  const logsDir = path.join(process.cwd(), 'results/logs');
   let executedCommands = [];
   try {
     if (fs.existsSync(logsDir)) {
