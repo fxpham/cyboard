@@ -7,10 +7,14 @@ const path = require('path');
  * @returns {string[]} Array of image paths relative to 'public' (e.g., '/images/screenshots/xxx.png')
  */
 function scanImages(folderPath) {
+  let results = [];
+   // Return empty if directory does not exist
+  if (!fs.existsSync(folderPath)) {
+    return results;
+  }
+
   const exts = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp'];
   const publicDir = path.resolve(__dirname, '../public');
-  let results = [];
-
   function walk(dir) {
     fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
       const fullPath = path.join(dir, entry.name);

@@ -35,9 +35,6 @@ router.get('/screenshot/:command', (req, res, next) => {
   const folderName = command.replace(/:/g, '_')
   const folder = path.join(__dirname, `../public/screenshot/${folderName}`);
   const images = scanImages(folder);
-  if (images.length === 0) {
-    return res.status(404).json({ error: 'No screenshots found.' });
-  }
   return res.json({ images });
 });
 
