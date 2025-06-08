@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const fs = require('fs');
-const scanImages = require('./scanImages');
+const scanImages = require('../utils/util');
 const archiver = require('archiver');
 
 /* GET result of executed command. */
