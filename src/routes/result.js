@@ -2,7 +2,13 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const fs = require('fs');
-const scanImages = require('../utils/util');
+const {
+  logsDir,
+  screenshotsDir,
+} = require('../config/config');
+const {
+  scanImages,
+} = require('../utils/util');
 const archiver = require('archiver');
 
 /* GET result of executed command. */
@@ -10,7 +16,7 @@ router.get('/log/:command', function(req, res, next) {
   const command = req.params.command;
   // Convert command name to log file name
   const logFileName = command.replace(/:/g, '_') + '.log';
-  const logFile = path.join(process.cwd(), 'results/logs', logFileName);
+  const logFile = path.join(logsDir, logFileName);
   fs.readFile(logFile, 'utf8', (err, data) => {
     if (err) {
       return res.status(404).json({ error: 'Log file not found.' });
@@ -33,7 +39,7 @@ router.get('/log/:command', function(req, res, next) {
 router.get('/screenshot/:command', (req, res, next) => {
   const command = req.params.command;
   const folderName = command.replace(/:/g, '_')
-  const folder = path.join(process.cwd(), 'results/screenshots', folderName);
+  const folder = path.join(screenshotsDir, folderName);
   const images = scanImages(folder);
   if (images.length === 0) {
     return res.status(404).json({ error: 'No screenshots found.' });
@@ -45,7 +51,7 @@ router.get('/screenshot/:command', (req, res, next) => {
 router.get('/screenshot/:command/download', (req, res, next) => {
   const command = req.params.command;
   const folderName = command.replace(/:/g, '_');
-  const folder = path.join(process.cwd(), 'results/screenshots', folderName);
+  const folder = path.join(screenshotsDir, folderName);
   if (!fs.existsSync(folder)) {
     return res.status(404).json({ error: 'Screenshot folder not found.' });
   }
@@ -66,7 +72,7 @@ router.get('/screenshot/:command/download', (req, res, next) => {
 router.delete('/log/:command/delete', (req, res) => {
   const command = req.params.command;
   const logFileName = command.replace(/:/g, '_') + '.log';
-  const logFile = path.join(process.cwd(), 'results/logs', logFileName);
+  const logFile = path.join(logsDir, logFileName);
   if (!fs.existsSync(logFile)) {
     return res.status(404).json({ error: 'Log file not found.' });
   }
@@ -78,12 +84,11 @@ router.delete('/log/:command/delete', (req, res) => {
 
 // Route to delete a log folder
 router.delete('/log/delete', (req, res) => {
-  const logFolder = path.join(process.cwd(), 'results/logs');
-  if (!fs.existsSync(logFolder)) {
+  if (!fs.existsSync(logsDir)) {
     return res.status(404).json({ error: 'Logs folder not found.' });
   }
   // Recursively delete folder
-  fs.rm(logFolder, { recursive: true, force: true }, err => {
+  fs.rm(logsDir, { recursive: true, force: true }, err => {
     if (err) return res.status(500).json({ error: 'Failed to delete log folder.' });
     res.json({ success: true });
   });
@@ -93,7 +98,7 @@ router.delete('/log/delete', (req, res) => {
 router.delete('/screenshot/:command/delete', (req, res) => {
   const command = req.params.command;
   const folderName = command.replace(/:/g, '_');
-  const folder = path.join(process.cwd(), 'results/screenshots', folderName);
+  const folder = path.join(screenshotsDir, folderName);
   if (!fs.existsSync(folder)) {
     return res.status(404).json({ error: 'Screenshot folder not found.' });
   }
@@ -106,12 +111,11 @@ router.delete('/screenshot/:command/delete', (req, res) => {
 
 // Route to delete a screenshot folder
 router.delete('/screenshot/delete', (req, res) => {
-  const screenshotFolder = path.join(process.cwd(), 'results/screenshots');
-  if (!fs.existsSync(screenshotFolder)) {
+  if (!fs.existsSync(screenshotsDir)) {
     return res.status(404).json({ error: 'Screenshot folder not found.' });
   }
   // Recursively delete folder
-  fs.rm(screenshotFolder, { recursive: true, force: true }, err => {
+  fs.rm(screenshotsDir, { recursive: true, force: true }, err => {
     if (err) return res.status(500).json({ error: 'Failed to delete screenshot folder.' });
     res.json({ success: true });
   });
@@ -119,9 +123,6 @@ router.delete('/screenshot/delete', (req, res) => {
 
 // Route to delete all results (logs and screenshots)
 router.delete('/delete', (req, res) => {
-  const logsDir = path.join(process.cwd(), 'results/logs');
-  const screenshotsDir = path.join(process.cwd(), 'results/screenshots');
-
   // Check if logs directory exists
   if (fs.existsSync(logsDir)) {
     fs.rm(logsDir, { recursive: true, force: true }, err => {

@@ -1,17 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-const fs = require('fs');
-
+const {
+  ensureDirSync,
+} = require('../utils/util');
 const logDir = path.join(process.cwd(), 'results/logs');
 const screenshotDir = path.join(process.cwd(), 'results/screenshots');
 const screenshotSrc = path.join(process.cwd(), 'cypress/screenshots');
-
-function ensureDirSync(dirPath) {
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true });
-  }
-}
 
 // Parse package.json to get scripts
 const packageJson = require(path.join(process.cwd(), 'package.json'));

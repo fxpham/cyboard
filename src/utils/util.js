@@ -32,4 +32,11 @@ function scanImages(folderPath) {
   return results;
 }
 
-module.exports = scanImages;
+function ensureDirSync(dirPath) {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+}
+
+module.exports.scanImages = scanImages;
+module.exports.ensureDirSync = ensureDirSync;
