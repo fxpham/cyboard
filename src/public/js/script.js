@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(data => {
       let info = `Executed: ${data.executedCount} | Queue: ${data.queueLength}`;
       let progressRunning = document.getElementById('progress-running');
-      progressRunning.textContent = data.running ? `Running: ${data.running}` : '';
+      progressRunning.textContent = data.runningCommand ? `Running: ${data.runningCommand}` : '';
       let progressStatus = document.getElementById('progress-status');
       progressStatus.textContent = info;
     });
