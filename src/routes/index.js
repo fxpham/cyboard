@@ -4,6 +4,11 @@ const fs = require('fs');
 const path = require('path');
 const packageJson = require(path.join(process.cwd(), 'package.json'));
 
+// For SPA: serve index.html for any unknown route
+router.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   // Get all script commands starting with 'spec:' and sort them
