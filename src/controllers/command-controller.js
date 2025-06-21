@@ -10,9 +10,15 @@ exports.getExecutedCommands = (req, res) => {
 };
 
 exports.getCommandsData = (req, res) => {
+  let commands = [{ type: 'subheader', title: 'Spec commands' }].concat(
+    commandService.getSpecCommands(),
+    [{ type: 'divider' }, { type: 'subheader', title: 'Other commands' }],
+    commandService.getOtherCommands(),
+  );
+  let executedCommands = [{ type: 'subheader', title: 'Spec commands' }].concat(commandService.getExecutedCommands());
   res.json({
-    commands: commandService.getSpecCommands(),
-    executedCommands: commandService.getExecutedCommands(),
+    commands: commands,
+    executedCommands: executedCommands,
   })
 };
 

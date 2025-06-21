@@ -29,9 +29,31 @@ class CommandService {
     if (packageJsonData.scripts) {
       specCommands = Object.keys(packageJsonData.scripts)
         .filter(cmd => cmd.startsWith('spec:'))
-        .sort();
+        .sort()
+        .map(cmd => ({
+          title: cmd,
+          value: cmd
+        }));
     }
     return specCommands;
+  }
+
+  /**
+   * Get custom commands not start with spec:
+   * @returns []
+   */
+  getOtherCommands() {
+    let commands = [];
+    if (packageJsonData.scripts) {
+      commands = Object.keys(packageJsonData.scripts)
+        .filter(cmd => !cmd.startsWith('spec:'))
+        .sort()
+        .map(cmd => ({
+          title: cmd,
+          value: cmd
+        }));
+    }
+    return commands;
   }
 
   getExecutedCommands() {
@@ -41,7 +63,11 @@ class CommandService {
         executedCommands = fs.readdirSync(logsDir)
           .filter(file => file.endsWith('.log'))
           .map(file => file.replace('.log', '').replace(/_/g, ':'))
-          .sort();
+          .sort()
+          .map(cmd => ({
+            title: cmd,
+            value: cmd
+          }));
       }
     } catch (e) {
       // If error, leave executedCommands empty

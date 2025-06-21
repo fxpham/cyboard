@@ -11,23 +11,23 @@ const filter = ref('');
 const filteredCommands = computed(() => {
   if (!filter.value) return props.data;
   return props.data.filter(cmd =>
-    cmd.toLowerCase().includes(filter.value.toLowerCase())
+    cmd.title && cmd.title.toLowerCase().includes(filter.value.toLowerCase())
   );
 });
 </script>
 
 <template>
   <div class="column column-2">
-    <h2>{{ title }}</h2>
+    <h3>{{ title }}</h3>
     <!-- <div id="result-actions" class="result-actions">
       <button id="delete-all-btn" class="button delete-all-btn">Delete
         all</button>
     </div> -->
     <div class="command-filter-wrap">
-      <input type="text" id="command-filter-input" class="command-filter-input"
-        placeholder="Filter commands..." v-model="filter">
+      <v-text-field placeholder="Filter commands..."
+        v-model="filter"></v-text-field>
     </div>
-    <div id="executed-command-list">
+    <!-- <div id="executed-command-list">
       <ul class="custom-list">
         <li v-if="filteredCommands.length === 0" class="custom-list-item">
           <span>Not found</span>
@@ -38,14 +38,14 @@ const filteredCommands = computed(() => {
           <span>
             <button class="show-result-command"
               data-command="{{ item }}">Result</button>
-            <!-- <button class="ml-4 show-screenshot-command"
-              data-command="{{ item }}">Screenshot</button> -->
+            <button class="ml-4 show-screenshot-command"
+              data-command="{{ item }}">Screenshot</button>
           </span>
         </li>
-        <!-- <li class="custom-list-item"><span>No commands executed yet.</span></li> -->
       </ul>
-    </div>
+    </div> -->
   </div>
+  <v-list :items="filteredCommands" active-class="text-blue"></v-list>
 </template>
 
 <style scoped>
