@@ -17,13 +17,8 @@
         <Commands title="Commands" :data="data?.commands || []" />
       </v-navigation-drawer>
 
-      <v-main class="d-flex align-center justify-center">
-        <v-container>
-          <v-sheet border="dashed md" color="surface-light" height="200"
-            rounded="lg" width="100%">
-            <Result title="Result" :log="logResult" />
-          </v-sheet>
-        </v-container>
+      <v-main>
+        <Result title="Result" :log="logResult"/>
       </v-main>
 
       <v-navigation-drawer app permanent right>

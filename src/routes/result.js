@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {
+  getResult,
   getCommandLog,
   getCommandScreenshots,
   downloadCommandScreenshots,
@@ -10,6 +11,9 @@ const {
   deleteScreenshots,
   deleteResults,
 } = require('../controllers/result-controller');
+
+/* GET result of executed command. */
+router.get('/:command', getResult);
 
 /* GET result of executed command. */
 router.get('/log/:command', getCommandLog);

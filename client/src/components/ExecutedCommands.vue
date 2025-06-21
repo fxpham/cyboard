@@ -27,7 +27,7 @@ const numberOfCommands = computed(() => {
 watch(selectedItem, async (newItem) => {
   if (newItem) {
     try {
-      fetch(`/result/log/${encodeURIComponent(newItem)}`)
+      fetch(`/result/${encodeURIComponent(newItem)}`)
         .then(res => res.json())
         .then(data => {
           emit('show-log', data);
@@ -44,7 +44,7 @@ watch(selectedItem, async (newItem) => {
   <div class="column column-2">
     <h3>{{ title }} - {{ numberOfCommands }}</h3>
     <div class="command-filter-wrap">
-      <v-text-field placeholder="Filter commands..."
+      <v-text-field hide-details="auto" placeholder="Filter commands..."
         v-model="filter"></v-text-field>
     </div>
   </div>
