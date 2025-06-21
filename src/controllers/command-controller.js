@@ -9,6 +9,13 @@ exports.getExecutedCommands = (req, res) => {
   res.json(commandService.getExecutedCommands())
 };
 
+exports.getCommandsData = (req, res) => {
+  res.json({
+    commands: commandService.getSpecCommands(),
+    executedCommands: commandService.getExecutedCommands(),
+  })
+};
+
 exports.executeCommand = (req, res) => {
   const command = req.params.command;
   if (!commandService.getSpecCommands().includes(command)) {

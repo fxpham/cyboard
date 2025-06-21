@@ -1,17 +1,10 @@
 <script setup>
-import { ref } from 'vue'
 
 defineProps({
   title: String,
+  data: [],
 })
 
-const data = ref('')
-
-async function fetchData() {
-  const res = await fetch('/command/executed');
-  const response = await res.json();
-  data.value = response;
-}
 </script>
 
 <template>
@@ -34,9 +27,6 @@ async function fetchData() {
         <!-- <li class="custom-list-item"><span>No commands executed yet.</span></li> -->
       </ul>
     </div>
-  <div class="card">
-    <button type="button" @click="fetchData">Fetch Data</button>
-  </div>
   </div>
 </template>
 
