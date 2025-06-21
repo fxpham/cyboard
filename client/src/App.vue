@@ -21,14 +21,15 @@
         <v-container>
           <v-sheet border="dashed md" color="surface-light" height="200"
             rounded="lg" width="100%">
-            <Result title="Result" />
+            <Result title="Result" :log="logResult" />
           </v-sheet>
         </v-container>
       </v-main>
 
       <v-navigation-drawer app permanent right>
         <ExecutedCommands title="Executed Commands"
-          :data="data?.executedCommands || []" />
+          :data="data?.executedCommands || []"
+          @show-log="handleShowLog" />
       </v-navigation-drawer>
     </v-layout>
   </v-app>
@@ -41,12 +42,17 @@ import ExecutedCommands from './components/ExecutedCommands.vue';
 import Result from './components/Result.vue';
 
 const data = ref(null);
+const logResult = ref(null);
 
 onMounted(async () => {
   const res = await fetch('/command/data');
   const response = await res.json();
   data.value = response;
 });
+
+function handleShowLog(log) {
+  logResult.value = log;
+}
 </script>
 
 <style scoped>
