@@ -128,12 +128,13 @@ function prevImage() {
   padding-top: 56px;
 }
 .image-dialog-actions {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 2;
-  border-bottom: 1px solid #eee;
+  background-color: #212121;
+  border-bottom: 1px solid #cecece;
 }
 .read-the-docs {
   color: #888;
