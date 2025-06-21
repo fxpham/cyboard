@@ -13,10 +13,15 @@ const filteredCommands = computed(() => {
     cmd.title && cmd.title.toLowerCase().includes(filter.value.toLowerCase())
   );
 });
+const numberOfCommands = computed(() => {
+  return props.data.filter(cmd =>
+    cmd.type !== 'subheader' && cmd.type !== 'divider'
+  ).length;
+});
 </script>
 
 <template>
-  <h3>{{ title }}</h3>
+  <h3>{{ title }} - {{ numberOfCommands }}</h3>
   <v-text-field placeholder="Filter commands..."
     v-model="filter"></v-text-field>
   <v-list :items="filteredCommands" :key="title" density="compact" item-props>

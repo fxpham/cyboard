@@ -18,6 +18,12 @@ const filteredCommands = computed(() => {
   );
 });
 
+const numberOfCommands = computed(() => {
+  return props.data.filter(cmd =>
+    cmd.type !== 'subheader' && cmd.type !== 'divider'
+  ).length;
+});
+
 watch(selectedItem, async (newItem) => {
   if (newItem) {
     try {
@@ -36,7 +42,7 @@ watch(selectedItem, async (newItem) => {
 
 <template>
   <div class="column column-2">
-    <h3>{{ title }}</h3>
+    <h3>{{ title }} - {{ numberOfCommands }}</h3>
     <div class="command-filter-wrap">
       <v-text-field placeholder="Filter commands..."
         v-model="filter"></v-text-field>
