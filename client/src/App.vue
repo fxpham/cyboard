@@ -1,9 +1,18 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import Commands from './components/Commands.vue';
+import ExecutedCommands from './components/ExecutedCommands.vue';
+import Result from './components/Result.vue';
 </script>
 
 <template>
-  <HelloWorld msg="Vite + Vue" />
+  <div class="custom-columns">
+    <!-- First column: 1/4 width -->
+    <Commands title="Commands"/>
+    <!-- Second column: 1/4 width -->
+    <ExecutedCommands title="Executed Commands"/>
+    <!-- Third column: 2/4 width -->
+    <Result title="Result"/>
+  </div>
 </template>
 
 <style scoped>
