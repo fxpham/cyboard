@@ -1,8 +1,18 @@
 <template>
   <v-app>
     <v-layout class="rounded rounded-md border">
-      <v-app-bar app color="surface-variant" dark title="Cyboard"></v-app-bar>
+      <v-app-bar app color="grey-darken-3" dark>
+        <v-app-bar-title>Cyboard</v-app-bar-title>
 
+        <v-btn icon>
+          <v-icon>mdi-refresh</v-icon>
+        </v-btn>
+
+        <v-btn icon>
+          <v-icon>mdi-delete</v-icon>
+        </v-btn>
+
+      </v-app-bar>
       <v-navigation-drawer app permanent left>
         <Commands title="Commands" :data="data?.commands || []" />
       </v-navigation-drawer>
@@ -11,7 +21,7 @@
         <v-container>
           <v-sheet border="dashed md" color="surface-light" height="200"
             rounded="lg" width="100%">
-              <Result title="Result" />
+            <Result title="Result" />
           </v-sheet>
         </v-container>
       </v-main>
