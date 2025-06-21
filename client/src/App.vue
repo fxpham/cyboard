@@ -1,3 +1,29 @@
+<template>
+  <v-app>
+    <v-layout class="rounded rounded-md border">
+      <v-app-bar app color="surface-variant" dark title="Cyboard"></v-app-bar>
+
+      <v-navigation-drawer app permanent left>
+        <Commands title="Commands" :data="data?.commands || []" />
+      </v-navigation-drawer>
+
+      <v-main class="d-flex align-center justify-center">
+        <v-container>
+          <v-sheet border="dashed md" color="surface-light" height="200"
+            rounded="lg" width="100%">
+              <Result title="Result" />
+          </v-sheet>
+        </v-container>
+      </v-main>
+
+      <v-navigation-drawer app permanent right>
+        <ExecutedCommands title="Executed Commands"
+          :data="data?.executedCommands || []" />
+      </v-navigation-drawer>
+    </v-layout>
+  </v-app>
+</template>
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import Commands from './components/Commands.vue';
@@ -11,19 +37,7 @@ onMounted(async () => {
   const response = await res.json();
   data.value = response;
 });
-
 </script>
-
-<template>
-  <div class="custom-columns">
-    <!-- First column: 1/4 width -->
-    <Commands title="Commands" :data="data?.commands || []"/>
-    <!-- Second column: 1/4 width -->
-    <ExecutedCommands title="Executed Commands" :data="data?.executedCommands"/>
-    <!-- Third column: 2/4 width -->
-    <Result title="Result"/>
-  </div>
-</template>
 
 <style scoped>
 .logo {
