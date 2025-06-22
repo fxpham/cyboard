@@ -30,7 +30,7 @@ function executeCommand(cmd) {
   fetch('/command/execute', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ command: cmd.title })
+    body: JSON.stringify({ command: cmd })
   })
     .then(res => res.json())
     .then(data => {
@@ -57,7 +57,7 @@ function executeCommand(cmd) {
             <v-list-subheader>{{ group.groupName }}</v-list-subheader>
             <v-list-item v-for="(command, cmdIndex) in group.commands"
               :key="`${index}-${cmdIndex}`" :title="command">
-              <template #append="{ command }">
+              <template #append>
                 <v-btn color="grey-lighten-1" icon="mdi-play" size="small"
                   variant="text" @click.stop="executeCommand(command)"></v-btn>
               </template>

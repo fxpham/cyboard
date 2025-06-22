@@ -11,8 +11,8 @@ exports.getStateCommands = (req, res) => {
 
 exports.executeCommand = (req, res) => {
   const command = req.body.command;
-  if (!commandService.getSpecCommands().find(specCmd => specCmd.value === command)) {
-    return res.status(400).json({ error: commandService.getSpecCommands() });
+  if (!commandService.getSpecCommands().find(specCmd => specCmd === command)) {
+    return res.status(400).json({ error: command });
   }
   // Add to queue and process
   new Promise((resolve, reject) => {

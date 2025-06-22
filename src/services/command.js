@@ -42,7 +42,7 @@ class CommandService {
     let stateCommands = [
       {
         groupName: "Waiting commands",
-        commands: this.commandQueue
+        commands: this.commandQueue.map(cmd => cmd.command)
       },
       {
         groupName: "Executing command",

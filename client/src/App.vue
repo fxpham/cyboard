@@ -78,7 +78,6 @@ onMounted(async () => {
   const res = await fetch('/command');
   const response = await res.json();
   data.value = response;
-  console.log(data);
 });
 
 function deleteAllResults() {
