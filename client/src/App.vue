@@ -14,17 +14,17 @@
 
       </v-app-bar>
       <v-navigation-drawer app permanent left>
-        <Commands title="Commands" :data="data?.commands || []" />
+        <Commands title="Commands" :commands="data?.commands || []" />
       </v-navigation-drawer>
 
       <v-main>
         <Result title="Result" :log="logResult" />
       </v-main>
 
-      <v-navigation-drawer app permanent right>
-        <ExecutedCommands title="Executed Commands"
-          :data="data?.executedCommands || []" @show-log="handleShowLog" />
-      </v-navigation-drawer>
+      <!-- <v-navigation-drawer app permanent right>
+        <ExecutedCommands title="State Commands"
+          :data="data?.stateCommands || []" @show-log="handleShowLog" />
+      </v-navigation-drawer> -->
 
       <v-dialog v-model="showDeleteDialog" max-width="400" persistent>
         <v-card prepend-icon="mdi-delete"
@@ -75,9 +75,10 @@ const showDeleteDialog = ref(false);
 const showRefreshDialog = ref(false);
 
 onMounted(async () => {
-  const res = await fetch('/command/data');
+  const res = await fetch('/command');
   const response = await res.json();
   data.value = response;
+  console.log(data);
 });
 
 function deleteAllResults() {
@@ -86,7 +87,7 @@ function deleteAllResults() {
 
 function refreshApplication() {
   showRefreshDialog.value = true;
-  fetch('/command/data', {
+  fetch('/command', {
     method: 'GET',
   })
     .then(res => res.json())
@@ -118,16 +119,4 @@ function handleShowLog(log) {
 </script>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
 </style>

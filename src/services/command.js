@@ -19,21 +19,59 @@ class CommandService {
      * @protected
      */
     this.isProcessing = false;
-    this.executedCount = 0;
     this.currentCommand = null;
   }
 
+  /**
+   * Data of all commands, including state of commands.
+   *
+   * @returns Object data
+   */
+  getCommandsData() {
+    let commands = [
+      {
+        groupName: "Spec commands",
+        commands: this.getSpecCommands()
+      },
+      {
+        groupName: "Other commands",
+        commands: this.getOtherCommands()
+      }
+    ];
+
+    let stateCommands = [
+      {
+        groupName: "Waiting commands",
+        commands: this.commandQueue
+      },
+      {
+        groupName: "Executing command",
+        commands: this.currentCommand ? [this.currentCommand] : []
+      },
+      {
+        groupName: "Executed commands",
+        commands: this.getExecutedCommands()
+      }
+    ];
+
+    return {
+      commands: commands,
+      stateCommands: stateCommands,
+    }
+  }
+
+  /**
+   * Get spec: commands.
+   *
+   * @returns Object[]
+   */
   getSpecCommands() {
     // Get all script commands starting with 'spec:' and sort them
     let specCommands = [];
     if (packageJsonData.scripts) {
       specCommands = Object.keys(packageJsonData.scripts)
         .filter(cmd => cmd.startsWith('spec:'))
-        .sort()
-        .map(cmd => ({
-          title: cmd,
-          value: cmd
-        }));
+        .sort();
     }
     return specCommands;
   }
@@ -47,15 +85,17 @@ class CommandService {
     if (packageJsonData.scripts) {
       commands = Object.keys(packageJsonData.scripts)
         .filter(cmd => !cmd.startsWith('spec:'))
-        .sort()
-        .map(cmd => ({
-          title: cmd,
-          value: cmd
-        }));
+        .sort();
     }
     return commands;
   }
 
+  /**
+   * Get executed command
+   *
+   * @todo Check running command.
+   * @returns
+   */
   getExecutedCommands() {
     let executedCommands = [];
     try {
@@ -63,11 +103,7 @@ class CommandService {
         executedCommands = fs.readdirSync(logsDir)
           .filter(file => file.endsWith('.log'))
           .map(file => file.replace('.log', '').replace(/_/g, ':'))
-          .sort()
-          .map(cmd => ({
-            title: cmd,
-            value: cmd
-          }));
+          .sort();
       }
     } catch (e) {
       // If error, leave executedCommands empty
@@ -75,6 +111,12 @@ class CommandService {
     return executedCommands;
   }
 
+  /**
+   * Execute command.
+   *
+   * @param {*} command
+   * @returns
+   */
   executeCommand(command) {
     ensureDirSync(logsDir);
     ensureDirSync(screenshotsDir);
@@ -112,7 +154,6 @@ class CommandService {
     this.executeCommand(command)
       .then(result => {
         this.isProcessing = false;
-        this.commandQueue.length === 0 ? this.executedCount = 0 : this.executedCount++;
         this.currentCommand = null;
         resolve(result);
         this.processQueue();
@@ -123,14 +164,6 @@ class CommandService {
         reject(error);
         this.processQueue();
       });
-  }
-
-  progressInfo() {
-    return {
-      queueLength: this.commandQueue.length,
-      executedCount: this.executedCount,
-      runningCommand: this.currentCommand
-    }
   }
 }
 

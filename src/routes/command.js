@@ -2,20 +2,14 @@ const express = require('express');
 const router = express.Router();
 const {
   getCommandsData,
-  getSpecCommands,
-  getExecutedCommands,
-  getProgressInfo,
+  getStateCommands,
   executeCommand,
 } = require('../controllers/command-controller');
 
-router.get('/data', getCommandsData);
+router.get('/', getCommandsData);
 
-router.get('/specs', getSpecCommands);
-
-router.get('/executed', getExecutedCommands);
+router.get('/state', getStateCommands);
 
 router.post('/execute', executeCommand);
-
-router.get('/progress', getProgressInfo);
 
 module.exports = router;

@@ -1,50 +1,12 @@
 const CommandService = require('../services/command');
 const commandService = new CommandService();
 
-exports.getSpecCommands = (req, res) => {
-  res.json(commandService.getSpecCommands())
-};
-
-exports.getExecutedCommands = (req, res) => {
-  res.json(commandService.getExecutedCommands())
-};
-
 exports.getCommandsData = (req, res) => {
-  let commands = [{ type: 'subheader', title: 'Spec commands' }].concat(
-    commandService.getSpecCommands(),
-    [{ type: 'divider' }, { type: 'subheader', title: 'Other commands' }],
-    commandService.getOtherCommands(),
-  );
-  let exCommands = [];
-  let executedCommands = [];
-  if (commandService.commandQueue.length) {
-    let queueCommands = commandService.commandQueue.map(cmd => ({
-      title: cmd.command,
-      value: cmd.command
-    }));
-    exCommands = exCommands.concat(
-      [{ type: 'subheader', title: 'Command queue' }],
-      queueCommands,
-    )
-  }
-  if (commandService.currentCommand) {
-    exCommands = exCommands.concat(
-      [
-        { type: 'subheader', title: 'Running command' },
-        { title: commandService.currentCommand, value: commandService.currentCommand}
-      ],
-    )
-  }
-  if (commandService.getExecutedCommands().length) {
-    executedCommands = exCommands.concat(
-      [{ type: 'subheader', title: 'Executed commands' }],
-      commandService.getExecutedCommands(),
-    );
-  }
-  res.json({
-    commands: commands,
-    executedCommands: executedCommands,
-  })
+  res.json(commandService.getCommandsData())
+};
+
+exports.getStateCommands = (req, res) => {
+  res.json(commandService.getStateCommands())
 };
 
 exports.executeCommand = (req, res) => {
@@ -62,7 +24,3 @@ exports.executeCommand = (req, res) => {
     res.status(500).json({ error: error.message });
   });
 };
-
-exports.getProgressInfo = (req, res) => {
-  return res.json(commandService.progressInfo());
-}
