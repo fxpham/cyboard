@@ -70,11 +70,11 @@ watch(selectedItem, async (newItem) => {
       <v-text-field hide-details="auto" placeholder="Search commands..."
         v-model="filter"></v-text-field>
       <template v-if="filteredCommands.length">
-        <v-list>
+        <v-list v-model:selected="selectedItem">
           <template v-for="(group, index) in filteredCommands" :key="index">
             <v-list-subheader>{{ group.groupName }}</v-list-subheader>
             <v-list-item v-for="(command, cmdIndex) in group.commands"
-              :key="`${index}-${cmdIndex}`" :title="command">
+              :key="`${index}-${cmdIndex}`" :title="command" :value="command">
               <template #append="{ command }">
                 <v-btn color="grey-lighten-1" icon="mdi-delete" size="small"
                   variant="text" @click.stop="deleteResult(command)"></v-btn>
