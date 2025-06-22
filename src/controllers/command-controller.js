@@ -23,9 +23,9 @@ exports.getCommandsData = (req, res) => {
 };
 
 exports.executeCommand = (req, res) => {
-  const command = req.params.command;
-  if (!commandService.getSpecCommands().includes(command)) {
-    return res.status(400).json({ error: 'Invalid command' });
+  const command = req.body.command;
+  if (!commandService.getSpecCommands().find(specCmd => specCmd.value === command)) {
+    return res.status(400).json({ error: commandService.getSpecCommands() });
   }
   // Add to queue and process
   new Promise((resolve, reject) => {

@@ -18,6 +18,19 @@ const numberOfCommands = computed(() => {
     cmd.type !== 'subheader' && cmd.type !== 'divider'
   ).length;
 });
+
+function executeCommand(cmd) {
+  fetch('/command/execute', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ command: cmd.title })
+  })
+    .then(res => res.json())
+    .then(data => {
+      // Optionally handle response
+      console.log('Command executed:', data);
+    });
+}
 </script>
 
 <template>
@@ -25,9 +38,9 @@ const numberOfCommands = computed(() => {
   <v-text-field hide-details="auto" placeholder="Filter commands..."
     v-model="filter"></v-text-field>
   <v-list :items="filteredCommands" :key="title" density="compact" item-props>
-    <template v-slot:append>
+    <template #append="{ item }">
       <v-btn color="grey-lighten-1" icon="mdi-play" size="small"
-        variant="text"></v-btn>
+        variant="text" @click.stop="executeCommand(item)"></v-btn>
     </template>
   </v-list>
 </template>

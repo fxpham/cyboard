@@ -14,7 +14,7 @@ router.get('/specs', getSpecCommands);
 
 router.get('/executed', getExecutedCommands);
 
-router.post('/execute/:command', executeCommand);
+router.post('/execute', executeCommand);
 
 router.get('/progress', getProgressInfo);
 
