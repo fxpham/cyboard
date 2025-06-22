@@ -21,10 +21,10 @@
         <Result title="Result" :log="logResult" />
       </v-main>
 
-      <!-- <v-navigation-drawer app permanent right>
-        <ExecutedCommands title="State Commands"
-          :data="data?.stateCommands || []" @show-log="handleShowLog" />
-      </v-navigation-drawer> -->
+      <v-navigation-drawer app permanent right>
+        <StateCommands title="State Commands"
+          :commands="data?.stateCommands || []" @show-log="handleShowLog" />
+      </v-navigation-drawer>
 
       <v-dialog v-model="showDeleteDialog" max-width="400" persistent>
         <v-card prepend-icon="mdi-delete"
@@ -66,7 +66,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import Commands from './components/Commands.vue';
-import ExecutedCommands from './components/ExecutedCommands.vue';
+import StateCommands from './components/StateCommands.vue';
 import Result from './components/Result.vue';
 
 const data = ref(null);
