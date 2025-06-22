@@ -41,19 +41,22 @@ watch(selectedItem, async (newItem) => {
 </script>
 
 <template>
-  <div class="column column-2">
-    <h3>{{ title }} - {{ numberOfCommands }}</h3>
-    <div class="command-filter-wrap">
+  <v-card>
+    <v-card-item>
+      <v-card-title>
+        {{ title }}
+        <!-- <v-badge color="error" :content="numberOfCommands" inline></v-badge> -->
+      </v-card-title>
+    </v-card-item>
+
+    <v-card-text>
       <v-text-field hide-details="auto" placeholder="Filter commands..."
         v-model="filter"></v-text-field>
-    </div>
-  </div>
-  <v-list :items="filteredCommands" active-class="text-blue"
-    v-model:selected="selectedItem"></v-list>
+    </v-card-text>
+    <v-list :items="filteredCommands" active-class="text-blue"
+      v-model:selected="selectedItem"></v-list>
+  </v-card>
 </template>
 
 <style scoped>
-.read-the-docs {
-  color: #888;
-}
 </style>

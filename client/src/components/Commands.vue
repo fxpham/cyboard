@@ -34,19 +34,27 @@ function executeCommand(cmd) {
 </script>
 
 <template>
-  <h3>{{ title }} - {{ numberOfCommands }}</h3>
-  <v-text-field hide-details="auto" placeholder="Filter commands..."
-    v-model="filter"></v-text-field>
-  <v-list :items="filteredCommands" :key="title" density="compact" item-props>
-    <template #append="{ item }">
-      <v-btn color="grey-lighten-1" icon="mdi-play" size="small"
-        variant="text" @click.stop="executeCommand(item)"></v-btn>
-    </template>
-  </v-list>
+  <v-card>
+    <v-card-item>
+      <v-card-title>
+        {{ title }}
+        <v-badge color="info" :content="numberOfCommands" floating></v-badge>
+      </v-card-title>
+    </v-card-item>
+
+    <v-card-text>
+      <v-text-field hide-details="auto" placeholder="Filter commands..."
+        v-model="filter"></v-text-field>
+      <v-list :items="filteredCommands" :key="title" density="compact"
+        item-props>
+        <template #append="{ item }">
+          <v-btn color="grey-lighten-1" icon="mdi-play" size="small"
+            variant="text" @click.stop="executeCommand(item)"></v-btn>
+        </template>
+      </v-list>
+    </v-card-text>
+  </v-card>
 </template>
 
 <style scoped>
-.read-the-docs {
-  color: #888;
-}
 </style>
