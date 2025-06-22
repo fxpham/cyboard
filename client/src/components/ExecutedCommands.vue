@@ -24,6 +24,17 @@ const numberOfCommands = computed(() => {
   ).length;
 });
 
+function deleteResult(cmd) {
+  // @todo Implement...
+  // fetch('/result/delete', {
+  //   method: 'DELETE',
+  // })
+  //   .then(res => res.json())
+  //   .then(data => {
+  //     console.log('Result is deleted:', data);
+  //   });
+}
+
 watch(selectedItem, async (newItem) => {
   if (newItem) {
     try {
@@ -54,7 +65,12 @@ watch(selectedItem, async (newItem) => {
         v-model="filter"></v-text-field>
       <template v-if="filteredCommands.length">
         <v-list :items="filteredCommands" active-class="text-blue"
-          v-model:selected="selectedItem"></v-list>
+          v-model:selected="selectedItem">
+          <template #append="{ item }">
+            <v-btn color="grey-lighten-1" icon="mdi-delete" size="small"
+              variant="text" @click.stop="deleteResult(item)"></v-btn>
+          </template>
+        </v-list>
       </template>
       <template v-else>
         <v-empty-state text="No executed commands">
