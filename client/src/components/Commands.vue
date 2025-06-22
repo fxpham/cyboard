@@ -41,18 +41,23 @@ function executeCommand(cmd) {
         <v-badge color="info" :content="numberOfCommands" floating></v-badge>
       </v-card-title>
     </v-card-item>
-
-    <v-card-text>
-      <v-text-field hide-details="auto" placeholder="Filter commands..."
-        v-model="filter"></v-text-field>
-      <v-list :items="filteredCommands" :key="title" density="compact"
-        item-props>
-        <template #append="{ item }">
-          <v-btn color="grey-lighten-1" icon="mdi-play" size="small"
-            variant="text" @click.stop="executeCommand(item)"></v-btn>
+      <v-card-text>
+        <v-text-field hide-details="auto" placeholder="Filter commands..."
+          v-model="filter"></v-text-field>
+        <template v-if="filteredCommands.length">
+          <v-list :items="filteredCommands" :key="title" density="compact"
+            item-props>
+            <template #append="{ item }">
+              <v-btn color="grey-lighten-1" icon="mdi-play" size="small"
+                variant="text" @click.stop="executeCommand(item)"></v-btn>
+            </template>
+          </v-list>
         </template>
-      </v-list>
-    </v-card-text>
+        <template v-else>
+          <v-empty-state text="No commands">
+          </v-empty-state>
+        </template>
+      </v-card-text>
   </v-card>
 </template>
 

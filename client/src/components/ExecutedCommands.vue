@@ -52,9 +52,15 @@ watch(selectedItem, async (newItem) => {
     <v-card-text>
       <v-text-field hide-details="auto" placeholder="Filter commands..."
         v-model="filter"></v-text-field>
+      <template v-if="filteredCommands.length">
+        <v-list :items="filteredCommands" active-class="text-blue"
+          v-model:selected="selectedItem"></v-list>
+      </template>
+      <template v-else>
+        <v-empty-state text="No executed commands">
+        </v-empty-state>
+      </template>
     </v-card-text>
-    <v-list :items="filteredCommands" active-class="text-blue"
-      v-model:selected="selectedItem"></v-list>
   </v-card>
 </template>
 

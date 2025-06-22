@@ -15,7 +15,32 @@ exports.getCommandsData = (req, res) => {
     [{ type: 'divider' }, { type: 'subheader', title: 'Other commands' }],
     commandService.getOtherCommands(),
   );
-  let executedCommands = [{ type: 'subheader', title: 'Spec commands' }].concat(commandService.getExecutedCommands());
+  let exCommands = [];
+  let executedCommands = [];
+  if (commandService.commandQueue.length) {
+    let queueCommands = commandService.commandQueue.map(cmd => ({
+      title: cmd.command,
+      value: cmd.command
+    }));
+    exCommands = exCommands.concat(
+      [{ type: 'subheader', title: 'Command queue' }],
+      queueCommands,
+    )
+  }
+  if (commandService.currentCommand) {
+    exCommands = exCommands.concat(
+      [
+        { type: 'subheader', title: 'Running command' },
+        { title: commandService.currentCommand, value: commandService.currentCommand}
+      ],
+    )
+  }
+  if (commandService.getExecutedCommands().length) {
+    executedCommands = exCommands.concat(
+      [{ type: 'subheader', title: 'Executed commands' }],
+      commandService.getExecutedCommands(),
+    );
+  }
   res.json({
     commands: commands,
     executedCommands: executedCommands,
