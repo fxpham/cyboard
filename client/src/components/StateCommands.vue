@@ -72,7 +72,7 @@ watch(selectedItem, async (newItem) => {
       <template v-if="filteredCommands.length">
         <v-list v-model:selected="selectedItem">
           <template v-for="(group, index) in filteredCommands" :key="index">
-            <v-list-subheader>{{ group.groupName }}</v-list-subheader>
+            <v-list-subheader v-if="group.commands.length > 0">{{ group.groupName }}</v-list-subheader>
             <v-list-item v-for="(command, cmdIndex) in group.commands"
               :key="`${index}-${cmdIndex}`" :title="command" :value="command">
               <template #append="{ command }">
@@ -80,7 +80,7 @@ watch(selectedItem, async (newItem) => {
                   variant="text" @click.stop="deleteResult(command)"></v-btn>
               </template>
             </v-list-item>
-            <v-divider v-if="index !== filteredCommands.length - 1"></v-divider>
+            <v-divider v-if="group.commands.length > 0 && index !== filteredCommands.length - 1"></v-divider>
           </template>
         </v-list>
       </template>

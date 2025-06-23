@@ -13,18 +13,18 @@
         </v-btn>
 
       </v-app-bar>
-      <v-navigation-drawer app permanent left>
+      <v-navigation-drawer app permanent left width="380">
         <Commands title="Commands" :commands="data?.commands || []" />
+      </v-navigation-drawer>
+
+      <v-navigation-drawer app permanent right width="380">
+        <StateCommands title="State Commands"
+          :commands="data?.stateCommands || []" @show-log="handleShowLog" />
       </v-navigation-drawer>
 
       <v-main>
         <Result title="Result" :log="logResult" />
       </v-main>
-
-      <v-navigation-drawer app permanent right>
-        <StateCommands title="State Commands"
-          :commands="data?.stateCommands || []" @show-log="handleShowLog" />
-      </v-navigation-drawer>
 
       <v-dialog v-model="showDeleteDialog" max-width="400" persistent>
         <v-card prepend-icon="mdi-delete"
