@@ -45,11 +45,10 @@ function prevImage() {
         <v-tabs-window v-model="tab">
           <v-tabs-window-item value="result">
             <template v-if="log && log.result">
-              <v-card>
-                <v-card-text class="text-center">
-                  <pre>{{ log.result }}</pre>
-                </v-card-text>
-              </v-card>
+              <v-sheet border="md" class="pa-6 text-white mx-auto"
+                color="#141518" max-width="850">
+                <pre>{{ log.result }}</pre>
+              </v-sheet>
             </template>
             <template v-else>
               <v-empty-state title="No result available."></v-empty-state>
@@ -57,7 +56,10 @@ function prevImage() {
           </v-tabs-window-item>
           <v-tabs-window-item value="detail">
             <template v-if="log && log.detail">
-              <pre>{{ log.detail }}</pre>
+              <v-sheet border="md" class="pa-6 text-white mx-auto"
+                color="#141518" max-width="850">
+                <pre>{{ log.detail }}</pre>
+              </v-sheet>
             </template>
             <template v-else>
               <v-empty-state title="No detail available."></v-empty-state>
@@ -68,8 +70,8 @@ function prevImage() {
               <v-container fluid>
                 <v-row>
                   <v-col v-for="img in log.screenshot" :key="img" cols="12"
-                    md="4">
-                    <v-img :lazy-src="img" :src="img" height="205" cover
+                    md="3">
+                    <v-img :lazy-src="img" :src="img" height="220"
                       @click="openImage(img)" class="image-clickable"></v-img>
                   </v-col>
                 </v-row>
@@ -106,8 +108,7 @@ function prevImage() {
     </v-card>
   </template>
   <template v-else>
-    <v-empty-state
-      headline="No result"
+    <v-empty-state headline="No result"
       text="Select a executed command to see the result.">
     </v-empty-state>
   </template>
