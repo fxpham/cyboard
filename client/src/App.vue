@@ -95,9 +95,9 @@ async function reloadData() {
   ]
 }
 
-onMounted(
+onMounted(() => {
   reloadData()
-);
+});
 
 function deleteAllResults() {
   showDeleteDialog.value = true;
