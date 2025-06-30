@@ -1,5 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue';
+import { defineEmits } from 'vue';
+
+const emit = defineEmits(['executed']);
 
 const props = defineProps({
   title: String,
@@ -26,6 +29,7 @@ function executeCommand(cmd) {
     .then(res => res.json())
     .then(data => {
       // Optionally handle response
+      emit('executed', data); // send data to parent
       console.log('Command executed:', data);
     });
 }

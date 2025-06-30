@@ -25,7 +25,7 @@ class CommandService {
   getCommands() {
     const commands = this.getSpecCommands().map(cmd => {
       let stt = 'idle';
-      if (this.queuedCommands.includes(cmd)) {
+      if (this.commandQueue.find((obj => obj.command === cmd))) {
         stt = 'waiting';
       }
       else if (this.currentCommand === cmd) {

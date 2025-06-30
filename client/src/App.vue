@@ -14,12 +14,13 @@
 
       </v-app-bar>
       <v-navigation-drawer app permanent left width="380">
-        <Commands title="Commands" :commands="commands || []" @reload="refreshApplication"/>
+        <Commands title="Commands" :commands="commands || []"
+          @reload="refreshApplication" @executed="handleCommandExecuted" />
       </v-navigation-drawer>
 
       <v-navigation-drawer app permanent right width="380">
-        <StateCommands title="State Commands"
-          :commands="stateCommands || []" @show-log="handleShowLog" />
+        <StateCommands title="State Commands" :commands="stateCommands || []"
+          @show-log="handleShowLog" />
       </v-navigation-drawer>
 
       <v-main>
@@ -129,6 +130,26 @@ function cancelDelete() {
 
 function handleShowLog(log) {
   logResult.value = log;
+}
+
+function handleCommandExecuted(data) {
+  // Do something with the executed command data
+  commands.value = data;
+  stateCommands.value = [
+    {
+      groupName: "Waiting commands",
+      commands: data.filter(cmd => cmd.status === 'waiting')
+    },
+    {
+      groupName: "Executing command",
+      commands: data.filter(cmd => cmd.status === 'processing')
+    },
+    {
+      groupName: "Executed commands",
+      commands: data.filter(cmd => cmd.status === 'executed')
+    }
+  ]
+  // console.log('Command executed in App:', data);
 }
 </script>
 
