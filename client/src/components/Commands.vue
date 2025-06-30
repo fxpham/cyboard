@@ -10,20 +10,11 @@ const filter = ref('');
 const filteredCommands = computed(() => {
   if (!filter.value) return props.commands;
   const searchLower = filter.value.toLowerCase();
-  return props.commands
-    .map(group => {
-      const filtered = group.commands.filter(cmd =>
-        cmd.toLowerCase().includes(searchLower)
-      );
-      return filtered.length
-        ? { groupName: group.groupName, commands: filtered }
-        : null;
-    })
-    .filter(Boolean);
+  return props.commands.find(cmd => cmd.toLowerCase.includes(searchLower));
 });
 
 const numberOfCommands = computed(() => {
-  return props.commands.reduce((total, group) => total + group.commands.length, 0);
+  return props.commands.length;
 });
 
 function executeCommand(cmd) {
@@ -53,17 +44,14 @@ function executeCommand(cmd) {
         v-model="filter"></v-text-field>
       <template v-if="filteredCommands.length">
         <v-list>
-          <template v-for="(group, index) in filteredCommands" :key="index">
-            <v-list-subheader>{{ group.groupName }}</v-list-subheader>
-            <v-list-item v-for="(command, cmdIndex) in group.commands"
-              :key="`${index}-${cmdIndex}`" :title="command">
+            <v-list-subheader>Spec Commands</v-list-subheader>
+            <v-list-item v-for="(command, index) in filteredCommands"
+              :key="index" :title="command.name">
               <template #append>
                 <v-btn color="grey-lighten-1" icon="mdi-play" size="small"
-                  variant="text" @click.stop="executeCommand(command)"></v-btn>
+                  variant="text" @click.stop="executeCommand(command.name)"></v-btn>
               </template>
             </v-list-item>
-            <v-divider v-if="index !== filteredCommands.length - 1"></v-divider>
-          </template>
         </v-list>
       </template>
       <template v-else>

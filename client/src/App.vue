@@ -14,12 +14,12 @@
 
       </v-app-bar>
       <v-navigation-drawer app permanent left width="380">
-        <Commands title="Commands" :commands="data?.commands || []" />
+        <Commands title="Commands" :commands="commands || []" @reload="refreshApplication"/>
       </v-navigation-drawer>
 
       <v-navigation-drawer app permanent right width="380">
         <StateCommands title="State Commands"
-          :commands="data?.stateCommands || []" @show-log="handleShowLog" />
+          :commands="stateCommands || []" @show-log="handleShowLog" />
       </v-navigation-drawer>
 
       <v-main>
@@ -69,16 +69,35 @@ import Commands from './components/Commands.vue';
 import StateCommands from './components/StateCommands.vue';
 import Result from './components/Result.vue';
 
-const data = ref(null);
+const commands = ref(null);
+const stateCommands = ref(null);
 const logResult = ref(null);
 const showDeleteDialog = ref(false);
 const showRefreshDialog = ref(false);
 
-onMounted(async () => {
+async function reloadData() {
   const res = await fetch('/command');
-  const response = await res.json();
-  data.value = response;
-});
+  const data = await res.json();
+  commands.value = data;
+  stateCommands.value = [
+    {
+      groupName: "Waiting commands",
+      commands: data.filter(cmd => cmd.status === 'waiting')
+    },
+    {
+      groupName: "Executing command",
+      commands: data.filter(cmd => cmd.status === 'processing')
+    },
+    {
+      groupName: "Executed commands",
+      commands: data.filter(cmd => cmd.status === 'executed')
+    }
+  ]
+}
+
+onMounted(
+  reloadData()
+);
 
 function deleteAllResults() {
   showDeleteDialog.value = true;
@@ -86,14 +105,9 @@ function deleteAllResults() {
 
 function refreshApplication() {
   showRefreshDialog.value = true;
-  fetch('/command', {
-    method: 'GET',
-  })
-    .then(res => res.json())
-    .then(response => {
-      data.value = response;
-      showRefreshDialog.value = false;
-    });
+  reloadData().then(() => {
+    showRefreshDialog.value = false;
+  });
 }
 
 function confirmDelete() {
@@ -102,6 +116,7 @@ function confirmDelete() {
   })
     .then(res => res.json())
     .then(data => {
+      reloadData();
       // Optionally handle response
       console.log('All results deleted:', data);
       showDeleteDialog.value = false;

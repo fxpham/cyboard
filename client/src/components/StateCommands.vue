@@ -17,7 +17,7 @@ const filteredCommands = computed(() => {
   return props.commands
     .map(group => {
       const filtered = group.commands.filter(cmd =>
-        cmd.toLowerCase().includes(searchLower)
+        cmd.name.toLowerCase().includes(searchLower)
       );
       return filtered.length
         ? { groupName: group.groupName, commands: filtered }
@@ -74,10 +74,10 @@ watch(selectedItem, async (newItem) => {
           <template v-for="(group, index) in filteredCommands" :key="index">
             <v-list-subheader v-if="group.commands.length > 0">{{ group.groupName }}</v-list-subheader>
             <v-list-item v-for="(command, cmdIndex) in group.commands"
-              :key="`${index}-${cmdIndex}`" :title="command" :value="command">
+              :key="`${index}-${cmdIndex}`" :title="command.name" :value="command.name">
               <template #append="{ command }">
                 <v-btn color="grey-lighten-1" icon="mdi-delete" size="small"
-                  variant="text" @click.stop="deleteResult(command)"></v-btn>
+                  variant="text" @click.stop="deleteResult(command.name)"></v-btn>
               </template>
             </v-list-item>
             <v-divider v-if="group.commands.length > 0 && index !== filteredCommands.length - 1"></v-divider>

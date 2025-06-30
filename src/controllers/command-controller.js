@@ -2,7 +2,7 @@ const CommandService = require('../services/command');
 const commandService = new CommandService();
 
 exports.getCommandsData = (req, res) => {
-  res.json(commandService.getCommandsData())
+  res.json(commandService.getCommands())
 };
 
 exports.getStateCommands = (req, res) => {

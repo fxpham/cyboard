@@ -22,6 +22,27 @@ class CommandService {
     this.currentCommand = null;
   }
 
+  getCommands() {
+    const commands = this.getSpecCommands().map(cmd => {
+      let stt = 'idle';
+      if (this.queuedCommands.includes(cmd)) {
+        stt = 'waiting';
+      }
+      else if (this.currentCommand === cmd) {
+        stt = 'processing';
+      }
+      else if (this.getExecutedCommands().includes(cmd)) {
+        stt = 'executed';
+      }
+      return {
+        name: cmd,
+        type: "spec",
+        status: stt,
+      }
+    })
+    return commands;
+  }
+
   /**
    * Data of all commands, including state of commands.
    *
