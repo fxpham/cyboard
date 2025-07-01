@@ -13,7 +13,7 @@ const filter = ref('');
 const filteredCommands = computed(() => {
   if (!filter.value) return props.commands;
   const searchLower = filter.value.toLowerCase();
-  return props.commands.find(cmd => cmd.toLowerCase.includes(searchLower));
+  return props.commands.filter(cmd => cmd.name.toLowerCase().includes(searchLower));
 });
 
 const numberOfCommands = computed(() => {
