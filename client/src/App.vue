@@ -19,11 +19,6 @@
           @show-log="handleShowLog" />
       </v-navigation-drawer>
 
-      <!-- <v-navigation-drawer app permanent right width="380">
-        <StateCommands title="State Commands" :commands="stateCommands || []"
-          @show-log="handleShowLog" />
-      </v-navigation-drawer> -->
-
       <v-main>
         <Result title="Result" :log="logResult" />
       </v-main>
@@ -68,11 +63,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import Commands from './components/Commands.vue';
-import StateCommands from './components/StateCommands.vue';
 import Result from './components/Result.vue';
 
 const commands = ref(null);
-const stateCommands = ref(null);
 const logResult = ref(null);
 const showDeleteDialog = ref(false);
 const showRefreshDialog = ref(false);
@@ -90,9 +83,9 @@ function processData(data) {
       commands: data.filter(cmd => cmd.status === 'waiting')
     },
     {
-      groupId: "executing",
+      groupId: "running",
       groupName: "Executing command",
-      commands: data.filter(cmd => cmd.status === 'processing')
+      commands: data.filter(cmd => cmd.status === 'running')
     },
     {
       groupId: "executed",
@@ -149,14 +142,14 @@ function handleCommandExecuted(data) {
   commands.value = processData(data)
 }
 function handleCommandExecuting(cmd) {
-  let executing = commands.value.find(group => group.groupId === 'executing');
+  let executing = commands.value.find(group => group.groupId === 'running');
   let waiting = commands.value.find(group => group.groupId === 'waiting');
 
   commands.value.forEach(group => {
     group.commands.forEach(command => {
       if (command.name === cmd) {
         if (executing.commands.length === 0) {
-          command.status = 'processing';
+          command.status = 'running';
           executing.commands.push(command);
           return;
         }
