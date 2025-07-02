@@ -1,12 +1,8 @@
 const CommandService = require('../services/command');
 const commandService = new CommandService();
 
-exports.getCommandsData = (req, res) => {
+exports.getCommands = (req, res) => {
   res.json(commandService.getCommands())
-};
-
-exports.getStateCommands = (req, res) => {
-  res.json(commandService.getStateCommands())
 };
 
 exports.executeCommand = (req, res) => {

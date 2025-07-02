@@ -29,7 +29,7 @@ class CommandService {
         stt = 'waiting';
       }
       else if (this.currentCommand === cmd) {
-        stt = 'processing';
+        stt = 'running';
       }
       else if (this.getExecutedCommands().includes(cmd)) {
         stt = 'executed';
@@ -38,47 +38,10 @@ class CommandService {
         name: cmd,
         type: "spec",
         status: stt,
+        //startTime: ""
       }
     })
     return commands;
-  }
-
-  /**
-   * Data of all commands, including state of commands.
-   *
-   * @returns Object data
-   */
-  getCommandsData() {
-    let commands = [
-      {
-        groupName: "Spec commands",
-        commands: this.getSpecCommands()
-      },
-      {
-        groupName: "Other commands",
-        commands: this.getOtherCommands()
-      }
-    ];
-
-    let stateCommands = [
-      {
-        groupName: "Waiting commands",
-        commands: this.commandQueue.map(cmd => cmd.command)
-      },
-      {
-        groupName: "Executing command",
-        commands: this.currentCommand ? [this.currentCommand] : []
-      },
-      {
-        groupName: "Executed commands",
-        commands: this.getExecutedCommands()
-      }
-    ];
-
-    return {
-      commands: commands,
-      stateCommands: stateCommands,
-    }
   }
 
   /**
@@ -95,20 +58,6 @@ class CommandService {
         .sort();
     }
     return specCommands;
-  }
-
-  /**
-   * Get custom commands not start with spec:
-   * @returns []
-   */
-  getOtherCommands() {
-    let commands = [];
-    if (packageJsonData.scripts) {
-      commands = Object.keys(packageJsonData.scripts)
-        .filter(cmd => !cmd.startsWith('spec:'))
-        .sort();
-    }
-    return commands;
   }
 
   /**
