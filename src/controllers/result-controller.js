@@ -6,12 +6,21 @@ exports.getResult = (req, res) => {
   // @todo check command parameter (has in command list) before executing.
   const screenshot = resultService.getScreenshots(req.params.command);
   resultService.getLog(req.params.command).then(log => {
-    const parts = log.split('(Run Finished)');
-    res.json({
-      result: parts[1] || '',
-      detail: parts[0] || '',
-      screenshot: screenshot
-    });
+    if (log === false) {
+      res.json({
+        result: '',
+        detail: '',
+        screenshot: []
+      });
+    }
+    else {
+      const parts = log.split('(Run Finished)');
+      res.json({
+        result: parts[1] || '',
+        detail: parts[0] || '',
+        screenshot: screenshot
+      });
+    }
   });
 };
 

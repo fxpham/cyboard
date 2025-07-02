@@ -13,15 +13,16 @@
         </v-btn>
 
       </v-app-bar>
-      <v-navigation-drawer app permanent left width="380">
+      <v-navigation-drawer app permanent left width="480">
         <Commands title="Commands" :commands="commands || []"
-          @reload="refreshApplication" @executed="handleCommandExecuted" />
-      </v-navigation-drawer>
-
-      <v-navigation-drawer app permanent right width="380">
-        <StateCommands title="State Commands" :commands="stateCommands || []"
+          @reload="refreshApplication" @executing="handleCommandExecuting" @executed="handleCommandExecuted"
           @show-log="handleShowLog" />
       </v-navigation-drawer>
+
+      <!-- <v-navigation-drawer app permanent right width="380">
+        <StateCommands title="State Commands" :commands="stateCommands || []"
+          @show-log="handleShowLog" />
+      </v-navigation-drawer> -->
 
       <v-main>
         <Result title="Result" :log="logResult" />
@@ -76,24 +77,35 @@ const logResult = ref(null);
 const showDeleteDialog = ref(false);
 const showRefreshDialog = ref(false);
 
-async function reloadData() {
-  const res = await fetch('/command');
-  const data = await res.json();
-  commands.value = data;
-  stateCommands.value = [
+function processData(data) {
+  return [
     {
+      groupId: "spec",
+      groupName: "Spec commands",
+      commands: data.filter(cmd => cmd.status === 'idle')
+    },
+    {
+      groupId: "waiting",
       groupName: "Waiting commands",
       commands: data.filter(cmd => cmd.status === 'waiting')
     },
     {
+      groupId: "executing",
       groupName: "Executing command",
       commands: data.filter(cmd => cmd.status === 'processing')
     },
     {
+      groupId: "executed",
       groupName: "Executed commands",
       commands: data.filter(cmd => cmd.status === 'executed')
     }
   ]
+}
+
+async function reloadData() {
+  const res = await fetch('/command');
+  const data = await res.json();
+  commands.value = processData(data)
 }
 
 onMounted(() => {
@@ -119,7 +131,7 @@ function confirmDelete() {
     .then(data => {
       reloadData();
       // Optionally handle response
-      console.log('All results deleted:', data);
+      // console.log('All results deleted:', data);
       showDeleteDialog.value = false;
     });
 }
@@ -134,22 +146,28 @@ function handleShowLog(log) {
 
 function handleCommandExecuted(data) {
   // Do something with the executed command data
-  commands.value = data;
-  stateCommands.value = [
-    {
-      groupName: "Waiting commands",
-      commands: data.filter(cmd => cmd.status === 'waiting')
-    },
-    {
-      groupName: "Executing command",
-      commands: data.filter(cmd => cmd.status === 'processing')
-    },
-    {
-      groupName: "Executed commands",
-      commands: data.filter(cmd => cmd.status === 'executed')
-    }
-  ]
-  // console.log('Command executed in App:', data);
+  commands.value = processData(data)
+}
+function handleCommandExecuting(cmd) {
+  let executing = commands.value.find(group => group.groupId === 'executing');
+  let waiting = commands.value.find(group => group.groupId === 'waiting');
+
+  commands.value.forEach(group => {
+    group.commands.forEach(command => {
+      if (command.name === cmd) {
+        if (executing.commands.length === 0) {
+          command.status = 'processing';
+          executing.commands.push(command);
+          return;
+        }
+        else {
+          command.status = 'waiting';
+          waiting.commands.push(command);
+          return;
+        }
+      }
+    })
+  });
 }
 </script>
 

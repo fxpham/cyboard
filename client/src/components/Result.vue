@@ -66,7 +66,7 @@ function prevImage() {
             </template>
           </v-tabs-window-item>
           <v-tabs-window-item value="screenshot">
-            <template v-if="log && log.screenshot">
+            <template v-if="log.screenshot.length">
               <v-container fluid>
                 <v-row>
                   <v-col v-for="img in log.screenshot" :key="img" cols="12"
