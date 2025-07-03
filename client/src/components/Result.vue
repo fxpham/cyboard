@@ -135,4 +135,11 @@ function prevImage() {
   background-color: #212121;
   border-bottom: 1px solid #cecece;
 }
+.v-window-item {
+  height: calc(100vh - 146px);
+  overflow: auto;
+}
+pre {
+  white-space: pre-wrap;
+}
 </style>
