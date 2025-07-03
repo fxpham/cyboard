@@ -72,7 +72,7 @@ class CommandService {
       if (fs.existsSync(logsDir)) {
         executedCommands = fs.readdirSync(logsDir)
           .filter(file => file.endsWith('.log'))
-          .map(file => file.replace('.log', '').replace(/_/g, ':'))
+          .map(file => file.replace('.log', '').replace('spec_', 'spec:'))
           .sort();
       }
     } catch (e) {
