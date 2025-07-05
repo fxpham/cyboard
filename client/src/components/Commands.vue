@@ -11,10 +11,19 @@ const props = defineProps({
 
 const selectedItem = ref(null);
 const filter = ref('');
+const state = ref('');
 const filteredCommands = computed(() => {
-  if (!filter.value) return props.commands;
-  const searchLower = filter.value.toLowerCase();
-  return props.commands.filter(cmd => cmd.name.toLowerCase().includes(searchLower));
+  if (!filter.value && !state.value) {
+    return props.commands;
+  }
+  else if (!state.value) {
+    const searchLower = filter.value.toLowerCase();
+    return props.commands.filter(cmd => cmd.name.toLowerCase().includes(searchLower));
+  }
+  else {
+    const searchLower = filter.value.toLowerCase();
+    return props.commands.filter(cmd => cmd.name.toLowerCase().includes(searchLower) && cmd.status === state.value);
+  }
 });
 
 const numberOfCommands = computed(() => {
@@ -53,10 +62,26 @@ watch(selectedItem, async (newItem) => {
 <template>
   <v-card>
     <v-card-item>
-      <v-card-title>
-        {{ title }}
-        <v-badge color="info" :content="numberOfCommands" floating></v-badge>
-      </v-card-title>
+      <v-list-item class="px-0">
+        <template v-slot:title>
+          <v-card-title>{{ title }}<v-badge class="px-2" color="info" :content="numberOfCommands" floating></v-badge>
+          </v-card-title>
+        </template>
+
+        <template v-slot:append>
+          <v-btn-toggle
+          v-model="state"
+          variant="outlined"
+          divided
+          color="primary"
+        >
+          <v-btn value="idle" icon="mdi-play"></v-btn>
+          <v-btn value="waiting" icon="mdi-progress-clock"></v-btn>
+          <v-btn value="running" icon="mdi-test-tube"></v-btn>
+          <v-btn value="executed" icon="mdi-check-all"></v-btn>
+        </v-btn-toggle>
+        </template>
+      </v-list-item>
     </v-card-item>
     <v-card-text>
       <v-text-field hide-details="auto" placeholder="Search commands..."
