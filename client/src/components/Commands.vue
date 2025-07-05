@@ -26,10 +26,6 @@ const filteredCommands = computed(() => {
   }
 });
 
-const numberOfCommands = computed(() => {
-  return props.commands.length;
-});
-
 function executeCommand(cmd) {
   emit('executing', cmd);
   fetch('/command/execute', {
@@ -64,7 +60,7 @@ watch(selectedItem, async (newItem) => {
     <v-card-item>
       <v-list-item class="px-0">
         <template v-slot:title>
-          <v-card-title>{{ title }}<v-badge class="px-2" color="info" :content="numberOfCommands" floating></v-badge>
+          <v-card-title>{{ title }}<v-badge class="px-2" color="info" :content="filteredCommands.length" floating></v-badge>
           </v-card-title>
         </template>
 
