@@ -36,7 +36,7 @@ function executeCommand(cmd) {
 }
 
 watch(selectedItem, async (newItem) => {
-  if (newItem) {
+  if (Object.keys(newItem).length) {
     try {
       fetch(`/result/${encodeURIComponent(newItem)}`)
         .then(res => res.json())
@@ -70,6 +70,8 @@ watch(selectedItem, async (newItem) => {
               <v-btn v-if="command.status == 'idle'" color="grey-lighten-1" icon="mdi-play" size="small"
                 variant="text"
                 @click.stop="executeCommand(command.name)"></v-btn>
+              <v-progress-circular v-else-if="command.status == 'running'" color="grey-lighten-1" :size="18" indeterminate></v-progress-circular>
+              <v-btn v-else-if="command.status == 'waiting'" color="grey-lighten-1" icon="mdi-close" size="small" variant="text"></v-btn>
               <v-btn v-else-if="command.status == 'executed'" color="grey-lighten-1" icon="mdi-refresh" size="small"
                 variant="text"
                 @click.stop="executeCommand(command.name)"></v-btn>
@@ -86,4 +88,7 @@ watch(selectedItem, async (newItem) => {
 </template>
 
 <style scoped>
+.v-progress-circular {
+  margin-right:10px;
+}
 </style>
