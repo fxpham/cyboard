@@ -46,7 +46,7 @@ function prevImage() {
           <v-tabs-window-item value="result">
             <template v-if="log && log.result">
               <v-sheet border="md" class="pa-6 text-white mx-auto"
-                color="#141518" max-width="850">
+                color="#141518" max-width="860">
                 <pre>{{ log.result }}</pre>
               </v-sheet>
             </template>
@@ -57,7 +57,7 @@ function prevImage() {
           <v-tabs-window-item value="detail">
             <template v-if="log && log.detail">
               <v-sheet border="md" class="pa-6 text-white mx-auto"
-                color="#141518" max-width="850">
+                color="#141518" max-width="860">
                 <pre>{{ log.detail }}</pre>
               </v-sheet>
             </template>

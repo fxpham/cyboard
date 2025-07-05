@@ -70,35 +70,10 @@ const logResult = ref(null);
 const showDeleteDialog = ref(false);
 const showRefreshDialog = ref(false);
 
-function processData(data) {
-  return [
-    {
-      groupId: "spec",
-      groupName: "Spec commands",
-      commands: data.filter(cmd => cmd.status === 'idle')
-    },
-    {
-      groupId: "waiting",
-      groupName: "Waiting commands",
-      commands: data.filter(cmd => cmd.status === 'waiting')
-    },
-    {
-      groupId: "running",
-      groupName: "Executing command",
-      commands: data.filter(cmd => cmd.status === 'running')
-    },
-    {
-      groupId: "executed",
-      groupName: "Executed commands",
-      commands: data.filter(cmd => cmd.status === 'executed')
-    }
-  ]
-}
-
 async function reloadData() {
   const res = await fetch('/command');
   const data = await res.json();
-  commands.value = processData(data)
+  commands.value = data;
 }
 
 onMounted(() => {
@@ -139,27 +114,16 @@ function handleShowLog(log) {
 
 function handleCommandExecuted(data) {
   // Do something with the executed command data
-  commands.value = processData(data)
+  commands.value = data;
 }
-function handleCommandExecuting(cmd) {
-  let executing = commands.value.find(group => group.groupId === 'running');
-  let waiting = commands.value.find(group => group.groupId === 'waiting');
 
-  commands.value.forEach(group => {
-    group.commands.forEach(command => {
-      if (command.name === cmd) {
-        if (executing.commands.length === 0) {
-          command.status = 'running';
-          executing.commands.push(command);
-          return;
-        }
-        else {
-          command.status = 'waiting';
-          waiting.commands.push(command);
-          return;
-        }
-      }
-    })
+function handleCommandExecuting(cmd) {
+  let executing = commands.value.find(command => command.status === 'running');
+  commands.value.forEach(command => {
+    if (command.name === cmd) {
+      command.status = executing ? 'waiting' : 'running';
+      return;
+    }
   });
 }
 </script>
