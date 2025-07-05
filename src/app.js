@@ -1,8 +1,6 @@
-const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 
-const errorHandler = require('./middlewares/error-handler');
 const logger = require('./middlewares/logger');
 
 const indexRouter = require('./routes/index');
@@ -20,13 +18,6 @@ app.use('/', indexRouter);
 app.use('/command', commandRouter);
 app.use('/result', resultRouter);
 
-// Catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
-
-// Error handler.
-app.use(errorHandler);
 // Logger.
 app.use(logger);
 
