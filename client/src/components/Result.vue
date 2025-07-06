@@ -59,12 +59,14 @@ async function copyToClipboard(text) {
         <v-tabs-window v-model="tab">
           <v-tabs-window-item value="result">
             <template v-if="log && log.result">
-              <v-sheet border="md" class="pa-6 text-white mx-auto"
-                color="#141518" max-width="860">
-                <v-btn v-if="copied" class="copy-clipboard" size="small"
-                  variant="text" disabled>
+              <v-sheet border="md"
+                class="pa-6 text-white mx-auto position-relative"
+                color="#141518" width="860">
+                <v-btn v-if="copied" class="position-absolute"
+                  size="small" variant="text" disabled>
                   <v-icon>mdi-check</v-icon>Copied</v-btn>
-                <v-btn v-else class="copy-clipboard" size="small" variant="text"
+                <v-btn v-else class="position-absolute" size="small"
+                  variant="text"
                   @click.stop="copyToClipboard(log.result)"><v-icon>mdi-content-copy</v-icon>Copy</v-btn>
                 <pre>{{ log.result }}</pre>
               </v-sheet>
@@ -76,7 +78,7 @@ async function copyToClipboard(text) {
           <v-tabs-window-item value="detail">
             <template v-if="log && log.detail">
               <v-sheet border="md" class="pa-6 text-white mx-auto"
-                color="#141518" max-width="860">
+                color="#141518" width="860">
                 <pre>{{ log.detail }}</pre>
               </v-sheet>
             </template>
@@ -163,9 +165,5 @@ async function copyToClipboard(text) {
 }
 pre {
   white-space: pre-wrap;
-}
-.copy-clipboard {
-  position: absolute;
-  right: 26px;
 }
 </style>
