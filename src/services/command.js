@@ -139,7 +139,7 @@ class CommandService {
   openCypress() {
     return new Promise((resolve, reject) => {
       const { exec } = require('child_process');
-      exec(`npx cypress open`, (error, stdout, stderr) => {
+      exec(`npx cypress open --e2e --browser electron`, (error, stdout, stderr) => {
         if (error) {
           return reject(error);
         }
