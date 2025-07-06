@@ -82,6 +82,18 @@ class CommandService {
   }
 
   /**
+   * Cancel waiting command.
+   *
+   * @param {string} command
+   */
+  cancelCommand(command) {
+    const index = this.commandQueue.findIndex(item => item.command === command);
+    if (index !== -1) {
+      this.commandQueue.splice(index, 1);
+    }
+  }
+
+  /**
    * Execute command.
    *
    * @param {*} command

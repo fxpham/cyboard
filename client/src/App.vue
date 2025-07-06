@@ -19,8 +19,9 @@
       </v-app-bar>
       <v-navigation-drawer app permanent left width="480">
         <Commands title="Commands" :commands="commands || []"
-          @reload="refreshApplication" @executing="handleCommandExecuting" @executed="handleCommandExecuted"
-          @show-log="handleShowLog" />
+          @reload="refreshApplication" @executing="handleCommandExecuting"
+          @cancelled="handleCommandCancelled"
+          @executed="handleCommandExecuted" @show-log="handleShowLog" />
       </v-navigation-drawer>
 
       <v-main>
@@ -131,6 +132,11 @@ function handleCommandExecuted(data) {
   commands.value = data;
 }
 
+function handleCommandCancelled(data) {
+  // Do something with the executed command data
+  commands.value = data;
+}
+
 function handleCommandExecuting(cmd) {
   let executing = commands.value.find(command => command.status === 'running');
   commands.value.forEach(command => {
@@ -142,5 +148,4 @@ function handleCommandExecuting(cmd) {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

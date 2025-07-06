@@ -30,3 +30,12 @@ exports.openCypress = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.cancelCommand = (req, res) => {
+  const cmd = req.body.command;
+  if (!commandService.getCommands().find(command => command.name === cmd && command.status === 'waiting')) {
+    return res.status(400).json({ error: cmd });
+  }
+  commandService.cancelCommand(cmd);
+  res.json(commandService.getCommands());
+};

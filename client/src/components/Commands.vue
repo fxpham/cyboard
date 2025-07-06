@@ -2,7 +2,11 @@
 import { ref, computed, watch } from 'vue';
 import { defineEmits } from 'vue';
 
-const emit = defineEmits(['executing', 'executed', 'show-log']);
+const emit = defineEmits([
+  'executing',
+  'executed',
+  'cancelled',
+  'show-log']);
 
 const props = defineProps({
   title: String,
@@ -12,6 +16,7 @@ const props = defineProps({
 const selectedItem = ref(null);
 const filter = ref('');
 const state = ref('');
+const disableCancelCommand = ref('');
 const filteredCommands = computed(() => {
   if (!filter.value && !state.value) {
     return props.commands;
@@ -40,6 +45,19 @@ function executeCommand(cmd) {
     });
 }
 
+function cancelCommand(cmd) {
+  disableCancelCommand.value = cmd;
+  fetch('/command/cancel', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ command: cmd })
+  })
+    .then(res => res.json())
+    .then(data => {
+      emit('cancelled', data); // send data to parent
+    });
+}
+
 watch(selectedItem, async (newItem) => {
   if (Object.keys(newItem).length) {
     try {
@@ -60,22 +78,19 @@ watch(selectedItem, async (newItem) => {
     <v-card-item>
       <v-list-item class="px-0">
         <template v-slot:title>
-          <v-card-title>{{ title }}<v-badge class="px-2" color="info" :content="filteredCommands.length" floating></v-badge>
+          <v-card-title>{{ title }}<v-badge class="px-2" color="info"
+              :content="filteredCommands.length" floating></v-badge>
           </v-card-title>
         </template>
 
         <template v-slot:append>
-          <v-btn-toggle
-          v-model="state"
-          variant="outlined"
-          divided
-          color="primary"
-        >
-          <v-btn value="idle" icon="mdi-play"></v-btn>
-          <v-btn value="waiting" icon="mdi-progress-clock"></v-btn>
-          <v-btn value="running" icon="mdi-test-tube"></v-btn>
-          <v-btn value="executed" icon="mdi-check-all"></v-btn>
-        </v-btn-toggle>
+          <v-btn-toggle v-model="state" variant="outlined" divided
+            color="primary">
+            <v-btn value="idle" icon="mdi-play"></v-btn>
+            <v-btn value="waiting" icon="mdi-progress-clock"></v-btn>
+            <v-btn value="running" icon="mdi-test-tube"></v-btn>
+            <v-btn value="executed" icon="mdi-check-all"></v-btn>
+          </v-btn-toggle>
         </template>
       </v-list-item>
     </v-card-item>
@@ -84,16 +99,22 @@ watch(selectedItem, async (newItem) => {
         v-model="filter"></v-text-field>
       <template v-if="filteredCommands.length">
         <v-list v-model:selected="selectedItem" lines="two">
-          <v-list-item v-for="command in filteredCommands"
-            :key="command.name" :title="command.name" :subtitle="command.status"
+          <v-list-item v-for="command in filteredCommands" :key="command.name"
+            :title="command.name" :subtitle="command.status"
             :value="command.name">
-            <template v-slot:append >
-              <v-btn v-if="command.status == 'idle'" color="grey-lighten-1" icon="mdi-play" size="small"
-                variant="text"
+            <template v-slot:append>
+              <v-btn v-if="command.status == 'idle'" color="grey-lighten-1"
+                icon="mdi-play" size="small" variant="text"
                 @click.stop="executeCommand(command.name)"></v-btn>
-              <v-progress-circular v-else-if="command.status == 'running'" color="grey-lighten-1" :size="18" indeterminate></v-progress-circular>
-              <v-btn v-else-if="command.status == 'waiting'" color="grey-lighten-1" icon="mdi-close" size="small" variant="text"></v-btn>
-              <v-btn v-else-if="command.status == 'executed'" color="grey-lighten-1" icon="mdi-refresh" size="small"
+              <v-progress-circular v-else-if="command.status == 'running'"
+                color="grey-lighten-1" :size="18"
+                indeterminate></v-progress-circular>
+              <v-btn v-else-if="command.status == 'waiting'"
+                color="grey-lighten-1" icon="mdi-close" size="small"
+                variant="text" :disabled="disableCancelCommand === command.name"
+                @click.stop="cancelCommand(command.name)"></v-btn>
+              <v-btn v-else-if="command.status == 'executed'"
+                color="grey-lighten-1" icon="mdi-refresh" size="small"
                 variant="text"
                 @click.stop="executeCommand(command.name)"></v-btn>
             </template>
@@ -110,6 +131,6 @@ watch(selectedItem, async (newItem) => {
 
 <style scoped>
 .v-progress-circular {
-  margin-right:10px;
+  margin-right: 10px;
 }
 </style>
