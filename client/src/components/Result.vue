@@ -76,7 +76,7 @@ function prevImage() {
                   </v-col>
                 </v-row>
               </v-container>
-              <v-dialog v-model="showImageDialog" max-width="800px">
+              <v-dialog v-model="showImageDialog" max-width="800px" height="100%">
                 <v-card class="image-dialog-card">
                   <v-card-actions
                     class="d-flex align-center image-dialog-actions">
@@ -84,18 +84,19 @@ function prevImage() {
                       :disabled="screenshotList.length <= 1">
                       <v-icon>mdi-chevron-left</v-icon>
                     </v-btn>
-                    <span class="mx-2">
+                    <span class="mx-2" style="min-width:fit-content">
                       {{ selectedIndex + 1 }} / {{ screenshotList.length }}
                     </span>
                     <v-btn icon @click="nextImage"
                       :disabled="screenshotList.length <= 1">
                       <v-icon>mdi-chevron-right</v-icon>
                     </v-btn>
+                    <span>{{ selectedImage }}</span>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text
-                      @click="closeImage">Close</v-btn>
+                    <v-btn color="primary" icon="mdi-close"
+                      @click="closeImage"></v-btn>
                   </v-card-actions>
-                  <v-img :src="selectedImage" contain></v-img>
+                  <v-img :src="selectedImage" contain max-height="inherit"></v-img>
                 </v-card>
               </v-dialog>
             </template>
