@@ -53,7 +53,10 @@ async function copyToClipboard(text) {
       <v-tabs v-model="tab" fixed-tabs align-tabs="center">
         <v-tab value="result">Result</v-tab>
         <v-tab value="detail">Detail</v-tab>
-        <v-tab value="screenshot">Screenshot</v-tab>
+        <v-tab value="screenshot">Screenshot
+          <v-btn v-if="tab==='screenshot'" class="position-absolute right-0" variant="text"
+            :href="`/result/screenshot/download/${encodeURIComponent(log.command)}`">
+            <v-icon>mdi-download</v-icon></v-btn></v-tab>
       </v-tabs>
       <v-card-text>
         <v-tabs-window v-model="tab">
@@ -62,8 +65,8 @@ async function copyToClipboard(text) {
               <v-sheet border="md"
                 class="pa-6 text-white mx-auto position-relative"
                 color="#141518" width="860">
-                <v-btn v-if="copied" class="position-absolute"
-                  size="small" variant="text" disabled>
+                <v-btn v-if="copied" class="position-absolute" size="small"
+                  variant="text" disabled>
                   <v-icon>mdi-check</v-icon>Copied</v-btn>
                 <v-btn v-else class="position-absolute" size="small"
                   variant="text"
