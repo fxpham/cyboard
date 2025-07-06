@@ -135,6 +135,19 @@ class CommandService {
         this.processQueue();
       });
   }
+
+  openCypress() {
+    return new Promise((resolve, reject) => {
+      const { exec } = require('child_process');
+      exec(`npx cypress open`, (error, stdout, stderr) => {
+        if (error) {
+          return reject(error);
+        }
+        // When Cypress is closed, resolve with stopped: true
+        resolve({ stopped: true });
+      });
+    });
+  }
 }
 
 module.exports = CommandService;

@@ -17,6 +17,16 @@ exports.executeCommand = (req, res) => {
   }).then(result => {
     res.json(commandService.getCommands());
   }).catch(error => {
-    res.status(500).json({ error: error.message });
+    res.json(commandService.getCommands());
+    // res.status(500).json({ error: error.message });
   });
+};
+
+exports.openCypress = async (req, res) => {
+  try {
+    const result = await commandService.openCypress()
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };

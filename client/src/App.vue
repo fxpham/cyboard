@@ -4,6 +4,10 @@
       <v-app-bar app color="grey-darken-3" dark>
         <v-app-bar-title>Cyboard</v-app-bar-title>
 
+        <v-btn icon @click="openCypress" :disabled="opening">
+          <v-icon>mdi-open-in-app</v-icon>
+        </v-btn>
+
         <v-btn icon @click="refreshApplication">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
@@ -67,6 +71,7 @@ import Result from './components/Result.vue';
 
 const commands = ref(null);
 const logResult = ref(null);
+const opening = ref(false);
 const showDeleteDialog = ref(false);
 const showRefreshDialog = ref(false);
 
@@ -82,6 +87,15 @@ onMounted(() => {
 
 function deleteAllResults() {
   showDeleteDialog.value = true;
+}
+
+function openCypress() {
+  opening.value = true;
+  fetch('/command/execute/cypress')
+    .then(res => res.json())
+    .then(data => {
+      opening.value = data.stopped ? false : true;
+    });
 }
 
 function refreshApplication() {
