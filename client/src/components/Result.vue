@@ -5,6 +5,7 @@ const props = defineProps({
   log: Object,
 });
 
+const copied = ref(false);
 const tab = ref('result');
 const showImageDialog = ref(false);
 const selectedImage = ref(null);
@@ -31,6 +32,19 @@ function prevImage() {
   selectedIndex.value = (selectedIndex.value - 1 + screenshotList.value.length) % screenshotList.value.length;
   selectedImage.value = screenshotList.value[selectedIndex.value];
 }
+
+async function copyToClipboard(text) {
+  try {
+    const trimmedText = text.split('\n').filter(line=>line!=='').join('\n');
+    await navigator.clipboard.writeText(trimmedText);
+    copied.value = true;
+
+    // Reset message after 1 seconds
+    setTimeout(() => copied.value = false, 1000)
+  } catch (err) {
+    console.error('Failed to copy text:', err)
+  }
+}
 </script>
 
 <template>
@@ -47,6 +61,11 @@ function prevImage() {
             <template v-if="log && log.result">
               <v-sheet border="md" class="pa-6 text-white mx-auto"
                 color="#141518" max-width="860">
+                <v-btn v-if="copied" class="copy-clipboard" size="small"
+                  variant="text" disabled>
+                  <v-icon>mdi-check</v-icon>Copied</v-btn>
+                <v-btn v-else class="copy-clipboard" size="small" variant="text"
+                  @click.stop="copyToClipboard(log.result)"><v-icon>mdi-content-copy</v-icon>Copy</v-btn>
                 <pre>{{ log.result }}</pre>
               </v-sheet>
             </template>
@@ -76,7 +95,8 @@ function prevImage() {
                   </v-col>
                 </v-row>
               </v-container>
-              <v-dialog v-model="showImageDialog" max-width="800px" height="100%">
+              <v-dialog v-model="showImageDialog" max-width="800px"
+                height="100%">
                 <v-card class="image-dialog-card">
                   <v-card-actions
                     class="d-flex align-center image-dialog-actions">
@@ -96,7 +116,8 @@ function prevImage() {
                     <v-btn color="primary" icon="mdi-close"
                       @click="closeImage"></v-btn>
                   </v-card-actions>
-                  <v-img :src="selectedImage" contain max-height="inherit"></v-img>
+                  <v-img :src="selectedImage" contain
+                    max-height="inherit"></v-img>
                 </v-card>
               </v-dialog>
             </template>
@@ -142,5 +163,9 @@ function prevImage() {
 }
 pre {
   white-space: pre-wrap;
+}
+.copy-clipboard {
+  position: absolute;
+  right: 26px;
 }
 </style>
