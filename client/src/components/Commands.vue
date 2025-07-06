@@ -6,6 +6,7 @@ const emit = defineEmits([
   'executing',
   'executed',
   'cancelled',
+  'deleted',
   'show-log']);
 
 const props = defineProps({
@@ -13,6 +14,7 @@ const props = defineProps({
   commands: Array,
 });
 
+const confirmDeleteResultDialog = ref(false);
 const selectedItem = ref(null);
 const filter = ref('');
 const state = ref('');
@@ -56,6 +58,29 @@ function cancelCommand(cmd) {
     .then(data => {
       emit('cancelled', data); // send data to parent
     });
+}
+
+function deleteResult(cmd) {
+  confirmDeleteResultDialog.value = cmd;
+}
+
+function confirmDelete() {
+  console.log(confirmDeleteResultDialog.value);
+  fetch('/result/delete', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ command: confirmDeleteResultDialog.value })
+  })
+    .then(res => res.json())
+    .then(data => {
+      confirmDeleteResultDialog.value = false;
+      // Optionally handle response
+      emit('deleted', data); // send data to parent
+    });
+}
+
+function cancelDelete() {
+  confirmDeleteResultDialog.value = false;
 }
 
 watch(selectedItem, async (newItem) => {
@@ -113,10 +138,14 @@ watch(selectedItem, async (newItem) => {
                 color="grey-lighten-1" icon="mdi-close" size="small"
                 variant="text" :disabled="disableCancelCommand === command.name"
                 @click.stop="cancelCommand(command.name)"></v-btn>
-              <v-btn v-else-if="command.status == 'executed'"
-                color="grey-lighten-1" icon="mdi-refresh" size="small"
-                variant="text"
-                @click.stop="executeCommand(command.name)"></v-btn>
+              <template v-else-if="command.status == 'executed'">
+                <v-btn color="grey-lighten-1" icon="mdi-delete" size="small"
+                  variant="text"
+                  @click.stop="deleteResult(command.name)"></v-btn>
+                <v-btn color="grey-lighten-1" icon="mdi-refresh" size="small"
+                  variant="text"
+                  @click.stop="executeCommand(command.name)"></v-btn>
+              </template>
             </template>
           </v-list-item>
         </v-list>
@@ -127,6 +156,22 @@ watch(selectedItem, async (newItem) => {
       </template>
     </v-card-text>
   </v-card>
+
+  <v-dialog v-model="confirmDeleteResultDialog" max-width="400" persistent>
+    <v-card prepend-icon="mdi-delete"
+      :text="`Are you sure you want to delete ${confirmDeleteResultDialog} result?`"
+      title="Confirm delete">
+      <template v-slot:actions>
+        <v-spacer></v-spacer>
+        <v-btn color="grey" @click="cancelDelete">
+          Cancel
+        </v-btn>
+        <v-btn color="error" @click="confirmDelete">
+          Delete
+        </v-btn>
+      </template>
+    </v-card>
+  </v-dialog>
 </template>
 
 <style scoped>

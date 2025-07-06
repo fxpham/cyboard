@@ -20,7 +20,7 @@
       <v-navigation-drawer app permanent left width="480">
         <Commands title="Commands" :commands="commands || []"
           @reload="refreshApplication" @executing="handleCommandExecuting"
-          @cancelled="handleCommandCancelled"
+          @cancelled="handleCommandCancelled" @deleted="handleResultDeleted"
           @executed="handleCommandExecuted" @show-log="handleShowLog" />
       </v-navigation-drawer>
 
@@ -83,8 +83,12 @@ async function reloadData() {
 }
 
 onMounted(() => {
-  reloadData()
+  reloadData();
 });
+
+function handleResultDeleted() {
+  reloadData();
+}
 
 function deleteAllResults() {
   showDeleteDialog.value = true;
@@ -107,7 +111,7 @@ function refreshApplication() {
 }
 
 function confirmDelete() {
-  fetch('/result/delete', {
+  fetch('/result/delete-all', {
     method: 'DELETE',
   })
     .then(res => res.json())
