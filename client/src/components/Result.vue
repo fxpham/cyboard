@@ -54,7 +54,7 @@ async function copyToClipboard(text) {
         <v-tab value="result">Result</v-tab>
         <v-tab value="detail">Detail</v-tab>
         <v-tab value="screenshot">Screenshot
-          <v-btn v-if="tab==='screenshot'" class="position-absolute right-0" variant="text"
+          <v-btn v-if="tab === 'screenshot' && log.screenshot.length" class="position-absolute right-0" variant="text"
             :href="`/result/screenshot/download/${encodeURIComponent(log.command)}`">
             <v-icon>mdi-download</v-icon></v-btn></v-tab>
       </v-tabs>
@@ -116,7 +116,7 @@ async function copyToClipboard(text) {
                       :disabled="screenshotList.length <= 1">
                       <v-icon>mdi-chevron-right</v-icon>
                     </v-btn>
-                    <span>{{ selectedImage }}</span>
+                    <span class="text-caption" style="overflow-wrap: anywhere;">{{ selectedImage }}</span>
                     <v-spacer></v-spacer>
                     <v-btn color="primary" icon="mdi-close"
                       @click="closeImage"></v-btn>
