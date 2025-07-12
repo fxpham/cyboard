@@ -39,3 +39,8 @@ exports.cancelCommand = (req, res) => {
   commandService.cancelCommand(cmd);
   res.json(commandService.getCommands());
 };
+
+exports.stopCommand = (req, res) => {
+  commandService.stopCommand();
+  res.json(commandService.getCommands());
+};
