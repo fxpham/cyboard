@@ -4,6 +4,10 @@
       <v-app-bar app color="grey-darken-3" dark>
         <v-app-bar-title>Cyboard</v-app-bar-title>
 
+        <v-btn icon @click="openCypress" :disabled="opening">
+          <v-icon>mdi-open-in-app</v-icon>
+        </v-btn>
+
         <v-btn icon @click="refreshApplication">
           <v-icon>mdi-refresh</v-icon>
         </v-btn>
@@ -13,14 +17,11 @@
         </v-btn>
 
       </v-app-bar>
-      <v-navigation-drawer app permanent left width="380">
+      <v-navigation-drawer app permanent left width="480">
         <Commands title="Commands" :commands="commands || []"
-          @reload="refreshApplication" @executed="handleCommandExecuted" />
-      </v-navigation-drawer>
-
-      <v-navigation-drawer app permanent right width="380">
-        <StateCommands title="State Commands" :commands="stateCommands || []"
-          @show-log="handleShowLog" />
+          @reload="refreshApplication" @executing="handleCommandExecuting"
+          @cancelled="handleCommandCancelled" @deleted="handleResultDeleted"
+          @executed="handleCommandExecuted" @show-log="handleShowLog" />
       </v-navigation-drawer>
 
       <v-main>
@@ -67,12 +68,11 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import Commands from './components/Commands.vue';
-import StateCommands from './components/StateCommands.vue';
 import Result from './components/Result.vue';
 
 const commands = ref(null);
-const stateCommands = ref(null);
 const logResult = ref(null);
+const opening = ref(false);
 const showDeleteDialog = ref(false);
 const showRefreshDialog = ref(false);
 
@@ -80,28 +80,27 @@ async function reloadData() {
   const res = await fetch('/command');
   const data = await res.json();
   commands.value = data;
-  stateCommands.value = [
-    {
-      groupName: "Waiting commands",
-      commands: data.filter(cmd => cmd.status === 'waiting')
-    },
-    {
-      groupName: "Executing command",
-      commands: data.filter(cmd => cmd.status === 'processing')
-    },
-    {
-      groupName: "Executed commands",
-      commands: data.filter(cmd => cmd.status === 'executed')
-    }
-  ]
 }
 
 onMounted(() => {
-  reloadData()
+  reloadData();
 });
+
+function handleResultDeleted() {
+  reloadData();
+}
 
 function deleteAllResults() {
   showDeleteDialog.value = true;
+}
+
+function openCypress() {
+  opening.value = true;
+  fetch('/command/execute/cypress')
+    .then(res => res.json())
+    .then(data => {
+      opening.value = data.stopped ? false : true;
+    });
 }
 
 function refreshApplication() {
@@ -112,14 +111,14 @@ function refreshApplication() {
 }
 
 function confirmDelete() {
-  fetch('/result/delete', {
+  fetch('/result/delete-all', {
     method: 'DELETE',
   })
     .then(res => res.json())
     .then(data => {
       reloadData();
       // Optionally handle response
-      console.log('All results deleted:', data);
+      // console.log('All results deleted:', data);
       showDeleteDialog.value = false;
     });
 }
@@ -135,23 +134,22 @@ function handleShowLog(log) {
 function handleCommandExecuted(data) {
   // Do something with the executed command data
   commands.value = data;
-  stateCommands.value = [
-    {
-      groupName: "Waiting commands",
-      commands: data.filter(cmd => cmd.status === 'waiting')
-    },
-    {
-      groupName: "Executing command",
-      commands: data.filter(cmd => cmd.status === 'processing')
-    },
-    {
-      groupName: "Executed commands",
-      commands: data.filter(cmd => cmd.status === 'executed')
+}
+
+function handleCommandCancelled(data) {
+  // Do something with the executed command data
+  commands.value = data;
+}
+
+function handleCommandExecuting(cmd) {
+  let executing = commands.value.find(command => command.status === 'running');
+  commands.value.forEach(command => {
+    if (command.name === cmd) {
+      command.status = executing ? 'waiting' : 'running';
+      return;
     }
-  ]
-  // console.log('Command executed in App:', data);
+  });
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

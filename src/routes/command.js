@@ -1,15 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const {
-  getCommandsData,
-  getStateCommands,
+  getCommands,
   executeCommand,
+  cancelCommand,
+  openCypress,
 } = require('../controllers/command-controller');
 
-router.get('/', getCommandsData);
+router.get('/', getCommands);
 
-router.get('/state', getStateCommands);
+router.post('/cancel', cancelCommand);
 
 router.post('/execute', executeCommand);
+
+router.get('/execute/cypress', openCypress);
 
 module.exports = router;

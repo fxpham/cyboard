@@ -29,7 +29,7 @@ class CommandService {
         stt = 'waiting';
       }
       else if (this.currentCommand === cmd) {
-        stt = 'processing';
+        stt = 'running';
       }
       else if (this.getExecutedCommands().includes(cmd)) {
         stt = 'executed';
@@ -38,47 +38,10 @@ class CommandService {
         name: cmd,
         type: "spec",
         status: stt,
+        //startTime: ""
       }
     })
     return commands;
-  }
-
-  /**
-   * Data of all commands, including state of commands.
-   *
-   * @returns Object data
-   */
-  getCommandsData() {
-    let commands = [
-      {
-        groupName: "Spec commands",
-        commands: this.getSpecCommands()
-      },
-      {
-        groupName: "Other commands",
-        commands: this.getOtherCommands()
-      }
-    ];
-
-    let stateCommands = [
-      {
-        groupName: "Waiting commands",
-        commands: this.commandQueue.map(cmd => cmd.command)
-      },
-      {
-        groupName: "Executing command",
-        commands: this.currentCommand ? [this.currentCommand] : []
-      },
-      {
-        groupName: "Executed commands",
-        commands: this.getExecutedCommands()
-      }
-    ];
-
-    return {
-      commands: commands,
-      stateCommands: stateCommands,
-    }
   }
 
   /**
@@ -98,20 +61,6 @@ class CommandService {
   }
 
   /**
-   * Get custom commands not start with spec:
-   * @returns []
-   */
-  getOtherCommands() {
-    let commands = [];
-    if (packageJsonData.scripts) {
-      commands = Object.keys(packageJsonData.scripts)
-        .filter(cmd => !cmd.startsWith('spec:'))
-        .sort();
-    }
-    return commands;
-  }
-
-  /**
    * Get executed command
    *
    * @todo Check running command.
@@ -123,13 +72,25 @@ class CommandService {
       if (fs.existsSync(logsDir)) {
         executedCommands = fs.readdirSync(logsDir)
           .filter(file => file.endsWith('.log'))
-          .map(file => file.replace('.log', '').replace(/_/g, ':'))
+          .map(file => file.replace('.log', '').replace('spec_', 'spec:'))
           .sort();
       }
     } catch (e) {
       // If error, leave executedCommands empty
     }
     return executedCommands;
+  }
+
+  /**
+   * Cancel waiting command.
+   *
+   * @param {string} command
+   */
+  cancelCommand(command) {
+    const index = this.commandQueue.findIndex(item => item.command === command);
+    if (index !== -1) {
+      this.commandQueue.splice(index, 1);
+    }
   }
 
   /**
@@ -185,6 +146,19 @@ class CommandService {
         reject(error);
         this.processQueue();
       });
+  }
+
+  openCypress() {
+    return new Promise((resolve, reject) => {
+      const { exec } = require('child_process');
+      exec(`npx cypress open --e2e --browser electron`, (error, stdout, stderr) => {
+        if (error) {
+          return reject(error);
+        }
+        // When Cypress is closed, resolve with stopped: true
+        resolve({ stopped: true });
+      });
+    });
   }
 }
 

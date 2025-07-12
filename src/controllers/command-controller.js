@@ -1,12 +1,8 @@
 const CommandService = require('../services/command');
 const commandService = new CommandService();
 
-exports.getCommandsData = (req, res) => {
+exports.getCommands = (req, res) => {
   res.json(commandService.getCommands())
-};
-
-exports.getStateCommands = (req, res) => {
-  res.json(commandService.getStateCommands())
 };
 
 exports.executeCommand = (req, res) => {
@@ -21,6 +17,25 @@ exports.executeCommand = (req, res) => {
   }).then(result => {
     res.json(commandService.getCommands());
   }).catch(error => {
-    res.status(500).json({ error: error.message });
+    res.json(commandService.getCommands());
+    // res.status(500).json({ error: error.message });
   });
+};
+
+exports.openCypress = async (req, res) => {
+  try {
+    const result = await commandService.openCypress()
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.cancelCommand = (req, res) => {
+  const cmd = req.body.command;
+  if (!commandService.getCommands().find(command => command.name === cmd && command.status === 'waiting')) {
+    return res.status(400).json({ error: cmd });
+  }
+  commandService.cancelCommand(cmd);
+  res.json(commandService.getCommands());
 };
