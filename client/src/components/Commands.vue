@@ -6,6 +6,7 @@ const emit = defineEmits([
   'executing',
   'executed',
   'cancelled',
+  'stopped',
   'deleted',
   'show-log']);
 
@@ -57,6 +58,16 @@ function cancelCommand(cmd) {
     .then(res => res.json())
     .then(data => {
       emit('cancelled', data); // send data to parent
+    });
+}
+
+function stopCommand() {
+  fetch('/command/stop', {
+    method: 'POST'
+  })
+    .then(res => res.json())
+    .then(data => {
+      emit('stopped', data); // send data to parent
     });
 }
 
@@ -131,9 +142,13 @@ watch(selectedItem, async (newItem) => {
               <v-btn v-if="command.status == 'idle'" color="grey-lighten-1"
                 icon="mdi-play" size="small" variant="text"
                 @click.stop="executeCommand(command.name)"></v-btn>
-              <v-progress-circular v-else-if="command.status == 'running'"
-                color="grey-lighten-1" :size="18"
-                indeterminate></v-progress-circular>
+              <template v-else-if="command.status == 'running'">
+                <v-btn color="grey-lighten-1" icon="mdi-stop" size="small"
+                  variant="text"
+                  @click.stop="stopCommand()"></v-btn>
+                <v-progress-circular color="grey-lighten-1" :size="18"
+                  indeterminate></v-progress-circular>
+              </template>
               <v-btn v-else-if="command.status == 'waiting'"
                 color="grey-lighten-1" icon="mdi-close" size="small"
                 variant="text" :disabled="disableCancelCommand === command.name"

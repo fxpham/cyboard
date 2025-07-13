@@ -20,7 +20,8 @@
       <v-navigation-drawer app permanent left width="480">
         <Commands title="Commands" :commands="commands || []"
           @reload="refreshApplication" @executing="handleCommandExecuting"
-          @cancelled="handleCommandCancelled" @deleted="handleResultDeleted"
+          @cancelled="handleCommandCancelled"
+          @stopped="handleCommandStopped" @deleted="handleResultDeleted"
           @executed="handleCommandExecuted" @show-log="handleShowLog" />
       </v-navigation-drawer>
 
@@ -137,6 +138,11 @@ function handleCommandExecuted(data) {
 }
 
 function handleCommandCancelled(data) {
+  // Do something with the executed command data
+  commands.value = data;
+}
+
+function handleCommandStopped(data) {
   // Do something with the executed command data
   commands.value = data;
 }

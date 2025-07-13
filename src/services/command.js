@@ -10,6 +10,7 @@ const {
   ensureDirSync,
 } = require('../utils/util');
 const packageJsonData = require(packageJson);
+const { exec, spawn } = require('child_process');
 
 class CommandService {
 
@@ -20,6 +21,7 @@ class CommandService {
      */
     this.isProcessing = false;
     this.currentCommand = null;
+    this.currentProcess = null;
   }
 
   getCommands() {
@@ -94,6 +96,21 @@ class CommandService {
   }
 
   /**
+   * Stop the currently running command.
+   */
+  stopCommand() {
+    if (this.currentProcess) {
+      const { exec } = require('child_process');
+      // this.currentProcess.kill()
+      // process.kill(-this.currentProcess.pid); // kill the process group
+      exec(`taskkill /PID ${this.currentProcess.pid} /T /F`);
+      this.currentProcess = null;
+      this.isProcessing = false;
+      this.currentCommand = null;
+    }
+  }
+
+  /**
    * Execute command.
    *
    * @param {*} command
@@ -105,25 +122,39 @@ class CommandService {
 
     const logFile = path.join(logsDir, command.replace(/:/g, '_') + '.log');
     const screenshotsDesDir = path.join(screenshotsDir, command.replace(/:/g, '_'));
+    let logStream = fs.createWriteStream(logFile);
 
     return new Promise((resolve, reject) => {
-      const { exec } = require('child_process');
-      exec(`npm run ${command} > "${logFile}"`, (error, stdout, stderr) => {
-        // Remove destination screenshot folder if it exists, then move
-        exec(`rm -rf ${screenshotsDesDir}`, (err) => {
+      this.currentProcess = spawn('npm', ['run', command], {
+        cwd: process.cwd(), // or your desired directory
+        shell: true
+      });
+      // this.currentProcess.stdout.on('data', (data) => {
+      //   console.log(`stdout: ${data}`)
+      // })
+      this.currentProcess.stdout.pipe(logStream)
+      this.currentProcess.stderr.pipe(logStream)
+
+      this.currentProcess.on('close', (code) => {
+        logStream.end();
+        // Copy screentshot folder to result.
+        exec(`rm -rf ${screenshotsDesDir} && cp -r ${screenshotSrcDir} ${screenshotsDesDir}`, (err) => {
           if (err) {
             return reject(err);
           }
-          exec(`cp -r ${screenshotSrcDir} ${screenshotsDesDir}`, (err) => {
-            if (err) {
-              return reject(err);
-            }
-            resolve({ stdout, stderr });
-          });
+          // resolve({ stderr });
         });
-        if (error) {
-          return reject(error);
-        }
+
+        resolve({ code });
+        this.currentProcess = null;
+        logStream = null;
+      });
+
+      this.currentProcess.stderr.on('error', (err) => {
+        logStream.end();
+        reject(err);
+        this.currentProcess = null;
+        logStream = null;
       });
     });
   }
