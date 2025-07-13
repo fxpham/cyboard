@@ -66,13 +66,13 @@
   </v-app>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import Commands from './components/Commands.vue';
 import Result from './components/Result.vue';
 
-const commands = ref(null);
-const logResult = ref(null);
+const commands = ref<any[]>([]);
+const logResult = ref<any>(null);
 const opening = ref(false);
 const showDeleteDialog = ref(false);
 const showRefreshDialog = ref(false);
@@ -118,8 +118,6 @@ function confirmDelete() {
     .then(res => res.json())
     .then(data => {
       reloadData();
-      // Optionally handle response
-      // console.log('All results deleted:', data);
       showDeleteDialog.value = false;
     });
 }
@@ -128,31 +126,34 @@ function cancelDelete() {
   showDeleteDialog.value = false;
 }
 
-function handleShowLog(log) {
-  logResult.value = log;
+function handleShowLog(cmd: string) {
+  fetch(`/result/${encodeURIComponent(cmd)}`)
+    .then(res => res.json())
+    .then(data => {
+      logResult.value = data;
+    })
+    .catch(error => {
+      console.error('API error:', error);
+    });
 }
 
-function handleCommandExecuted(data) {
-  // Do something with the executed command data
+function handleCommandExecuted(data: any) {
   commands.value = data;
 }
 
-function handleCommandCancelled(data) {
-  // Do something with the executed command data
+function handleCommandCancelled(data: any) {
   commands.value = data;
 }
 
-function handleCommandStopped(data) {
-  // Do something with the executed command data
+function handleCommandStopped(data: any) {
   commands.value = data;
 }
 
-function handleCommandExecuting(cmd) {
-  let executing = commands.value.find(command => command.status === 'running');
+function handleCommandExecuting(cmd: string) {
+  const executing = commands.value.find(command => command.status === 'running');
   commands.value.forEach(command => {
     if (command.name === cmd) {
       command.status = executing ? 'waiting' : 'running';
-      return;
     }
   });
 }

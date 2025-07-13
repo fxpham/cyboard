@@ -1,6 +1,11 @@
-<script setup>
-import { ref, computed, watch } from 'vue';
-import { defineEmits } from 'vue';
+<script setup lang="ts">
+import { ref, computed, watch, defineProps, defineEmits } from 'vue';
+
+interface CommandType {
+  name: string;
+  type?: string;
+  status: string;
+}
 
 const emit = defineEmits([
   'executing',
@@ -8,33 +13,30 @@ const emit = defineEmits([
   'cancelled',
   'stopped',
   'deleted',
-  'show-log']);
+  'show-log',
+  'request-log',
+]);
 
-const props = defineProps({
-  title: String,
-  commands: Array,
-});
+const props = defineProps<{ title?: string; commands: CommandType[] }>();
 
-const confirmDeleteResultDialog = ref(false);
-const selectedItem = ref(null);
+const confirmDeleteResultDialog = ref<string | false>(false);
+const selectedItem = ref<string | null>(null);
 const filter = ref('');
 const state = ref('');
 const disableCancelCommand = ref('');
 const filteredCommands = computed(() => {
   if (!filter.value && !state.value) {
     return props.commands;
-  }
-  else if (!state.value) {
+  } else if (!state.value) {
     const searchLower = filter.value.toLowerCase();
     return props.commands.filter(cmd => cmd.name.toLowerCase().includes(searchLower));
-  }
-  else {
+  } else {
     const searchLower = filter.value.toLowerCase();
     return props.commands.filter(cmd => cmd.name.toLowerCase().includes(searchLower) && cmd.status === state.value);
   }
 });
 
-function executeCommand(cmd) {
+function executeCommand(cmd: string) {
   emit('executing', cmd);
   fetch('/command/execute', {
     method: 'POST',
@@ -43,12 +45,11 @@ function executeCommand(cmd) {
   })
     .then(res => res.json())
     .then(data => {
-      // Optionally handle response
-      emit('executed', data); // send data to parent
+      emit('executed', data);
     });
 }
 
-function cancelCommand(cmd) {
+function cancelCommand(cmd: string) {
   disableCancelCommand.value = cmd;
   fetch('/command/cancel', {
     method: 'POST',
@@ -57,7 +58,7 @@ function cancelCommand(cmd) {
   })
     .then(res => res.json())
     .then(data => {
-      emit('cancelled', data); // send data to parent
+      emit('cancelled', data);
     });
 }
 
@@ -67,16 +68,15 @@ function stopCommand() {
   })
     .then(res => res.json())
     .then(data => {
-      emit('stopped', data); // send data to parent
+      emit('stopped', data);
     });
 }
 
-function deleteResult(cmd) {
+function deleteResult(cmd: string) {
   confirmDeleteResultDialog.value = cmd;
 }
 
 function confirmDelete() {
-  console.log(confirmDeleteResultDialog.value);
   fetch('/result/delete', {
     method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
@@ -85,8 +85,7 @@ function confirmDelete() {
     .then(res => res.json())
     .then(data => {
       confirmDeleteResultDialog.value = false;
-      // Optionally handle response
-      emit('deleted', data); // send data to parent
+      emit('deleted', data);
     });
 }
 
@@ -95,16 +94,8 @@ function cancelDelete() {
 }
 
 watch(selectedItem, async (newItem) => {
-  if (Object.keys(newItem).length) {
-    try {
-      fetch(`/result/${encodeURIComponent(newItem)}`)
-        .then(res => res.json())
-        .then(data => {
-          emit('show-log', data);
-        });
-    } catch (error) {
-      console.error('API error:', error);
-    }
+  if (newItem) {
+    emit('show-log', newItem);
   }
 });
 </script>

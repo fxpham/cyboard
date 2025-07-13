@@ -1,19 +1,25 @@
-<script setup>
-import { ref, computed } from 'vue';
-const props = defineProps({
-  title: String,
-  log: Object,
-});
+<script setup lang="ts">
+import { ref, computed, defineProps } from 'vue';
+
+interface LogType {
+  title?: string;
+  result?: string;
+  detail?: string;
+  screenshot?: string[];
+  command?: string;
+}
+
+const props = defineProps<{ title?: string; log?: LogType }>();
 
 const copied = ref(false);
-const tab = ref('result');
+const tab = ref<'result' | 'detail' | 'screenshot'>('result');
 const showImageDialog = ref(false);
-const selectedImage = ref(null);
+const selectedImage = ref<string | null>(null);
 const selectedIndex = ref(0);
 
-const screenshotList = computed(() => Array.isArray(props.log?.screenshot) ? props.log.screenshot : []);
+const screenshotList = computed(() => Array.isArray(props.log?.screenshot) ? props.log!.screenshot : []);
 
-function openImage(img) {
+function openImage(img: string) {
   selectedIndex.value = screenshotList.value.findIndex(i => i === img);
   selectedImage.value = img;
   showImageDialog.value = true;
@@ -33,16 +39,14 @@ function prevImage() {
   selectedImage.value = screenshotList.value[selectedIndex.value];
 }
 
-async function copyToClipboard(text) {
+async function copyToClipboard(text: string) {
   try {
-    const trimmedText = text.split('\n').filter(line=>line!=='').join('\n');
+    const trimmedText = text.split('\n').filter(line => line !== '').join('\n');
     await navigator.clipboard.writeText(trimmedText);
     copied.value = true;
-
-    // Reset message after 1 seconds
-    setTimeout(() => copied.value = false, 1000)
+    setTimeout(() => copied.value = false, 1000);
   } catch (err) {
-    console.error('Failed to copy text:', err)
+    console.error('Failed to copy text:', err);
   }
 }
 </script>
