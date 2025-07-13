@@ -1,30 +1,46 @@
 const CommandService = require('../services/command');
 const commandService = new CommandService();
 
-exports.getSpecCommands = (req, res) => {
-  res.json(commandService.getSpecCommands())
-};
-
-exports.getExecutedCommands = (req, res) => {
-  res.json(commandService.getExecutedCommands())
+exports.getCommands = (req, res) => {
+  res.json(commandService.getCommands())
 };
 
 exports.executeCommand = (req, res) => {
-  const command = req.params.command;
-  if (!commandService.getSpecCommands().includes(command)) {
-    return res.status(400).json({ error: 'Invalid command' });
+  const command = req.body.command;
+  if (!commandService.getSpecCommands().find(specCmd => specCmd === command)) {
+    return res.status(400).json({ error: command });
   }
-  // Add to queue and process
+  // Add to queue and process, then return getCommands() data when done
   new Promise((resolve, reject) => {
     commandService.commandQueue.push({ command, resolve, reject });
     commandService.processQueue();
   }).then(result => {
-    res.json({ stdout: result.stdout, stderr: result.stderr });
+    res.json(commandService.getCommands());
   }).catch(error => {
-    res.status(500).json({ error: error.message });
+    res.json(commandService.getCommands());
+    // res.status(500).json({ error: error.message });
   });
 };
 
-exports.getProgressInfo = (req, res) => {
-  return res.json(commandService.progressInfo());
-}
+exports.openCypress = async (req, res) => {
+  try {
+    const result = await commandService.openCypress()
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.cancelCommand = (req, res) => {
+  const cmd = req.body.command;
+  if (!commandService.getCommands().find(command => command.name === cmd && command.status === 'waiting')) {
+    return res.status(400).json({ error: cmd });
+  }
+  commandService.cancelCommand(cmd);
+  res.json(commandService.getCommands());
+};
+
+exports.stopCommand = (req, res) => {
+  commandService.stopCommand();
+  res.json(commandService.getCommands());
+};

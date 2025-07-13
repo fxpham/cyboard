@@ -2,23 +2,29 @@ const archiver = require('archiver');
 const ResultService = require('../services/result');
 const resultService = new ResultService();
 
-exports.getCommandLog = (req, res) => {
+exports.getResult = (req, res) => {
   // @todo check command parameter (has in command list) before executing.
-  resultService.getLog(req.params.command).then(log => {
-    const parts = log.split('(Run Finished)');
-    res.json({
-      result: parts[1] || '',
-      detail: parts[0] || '',
-    });
+  const cmd = req.params.command;
+  const screenshot = resultService.getScreenshots(cmd);
+  resultService.getLog(cmd).then(log => {
+    if (log === false) {
+      res.json({
+        command: cmd,
+        result: '',
+        detail: '',
+        screenshot: []
+      });
+    }
+    else {
+      const parts = log.split('(Run Finished)');
+      res.json({
+        command: cmd,
+        result: parts[1] || '',
+        detail: parts[0] || '',
+        screenshot: screenshot
+      });
+    }
   });
-};
-
-exports.getCommandScreenshots = (req, res) => {
-  const images = resultService.getScreenshots(req.params.command);
-  if (images.length === 0) {
-    return res.status(404).json({ error: 'No screenshots found.' });
-  }
-  return res.json({ images });
 };
 
 exports.downloadCommandScreenshots = (req, res) => {
@@ -36,39 +42,15 @@ exports.downloadCommandScreenshots = (req, res) => {
   archive.finalize();
 }
 
-exports.deleteCommandLog = (req, res) => {
-  const result = resultService.removeLog(req.params.command);
-  if (result) {
-    return res.json({ success: result });
-  }
-  return res.status(404).json({ error: 'Log file not found.' });
-}
-
-exports.deleteLogs = (req, res) => {
-  resultService.removeAllLogs().then(result => {
+exports.deleteCommandResult = (req, res) => {
+  const cmd = req.body.command;
+  resultService.removeLog(cmd);
+  resultService.removeScreenshots(cmd).then(result => {
     if (result === false) {
       return res.json({ success: false})
     }
     return res.json({ success: true });
-  });
-}
-
-exports.deleteCommandScreenshots = (req, res) => {
-  resultService.removeScreenshots(req.params.command).then(result => {
-    if (result === false) {
-      return res.json({ success: false})
-    }
-    return res.json({ success: true });
-  });
-}
-
-exports.deleteScreenshots = (req, res) => {
-  resultService.removeAllScreenshots().then(result => {
-    if (result === false) {
-      return res.json({ success: false})
-    }
-    return res.json({ success: true });
-  });
+  })
 }
 
 exports.deleteResults = (req, res) => {

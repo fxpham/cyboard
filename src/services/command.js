@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const { exec, spawn } = require('child_process');
+const dayjs = require('dayjs');
 const {
   packageJson,
   logsDir,
@@ -19,10 +21,37 @@ class CommandService {
      * @protected
      */
     this.isProcessing = false;
-    this.executedCount = 0;
     this.currentCommand = null;
+    this.currentProcess = null;
   }
 
+  getCommands() {
+    const commands = this.getSpecCommands().map(cmd => {
+      let stt = 'idle';
+      if (this.commandQueue.find((obj => obj.command === cmd))) {
+        stt = 'waiting';
+      }
+      else if (this.currentCommand === cmd) {
+        stt = 'running';
+      }
+      else if (this.getExecutedCommands().includes(cmd)) {
+        stt = 'executed';
+      }
+      return {
+        name: cmd,
+        type: "spec",
+        status: stt,
+        //startTime: ""
+      }
+    })
+    return commands;
+  }
+
+  /**
+   * Get spec: commands.
+   *
+   * @returns Object[]
+   */
   getSpecCommands() {
     // Get all script commands starting with 'spec:' and sort them
     let specCommands = [];
@@ -34,13 +63,19 @@ class CommandService {
     return specCommands;
   }
 
+  /**
+   * Get executed command
+   *
+   * @todo Check running command.
+   * @returns
+   */
   getExecutedCommands() {
     let executedCommands = [];
     try {
       if (fs.existsSync(logsDir)) {
         executedCommands = fs.readdirSync(logsDir)
           .filter(file => file.endsWith('.log'))
-          .map(file => file.replace('.log', '').replace(/_/g, ':'))
+          .map(file => file.replace('.log', '').replace('spec_', 'spec:'))
           .sort();
       }
     } catch (e) {
@@ -49,31 +84,82 @@ class CommandService {
     return executedCommands;
   }
 
+  /**
+   * Cancel waiting command.
+   *
+   * @param {string} command
+   */
+  cancelCommand(command) {
+    const index = this.commandQueue.findIndex(item => item.command === command);
+    if (index !== -1) {
+      this.commandQueue.splice(index, 1);
+    }
+  }
+
+  /**
+   * Stop the currently running command.
+   */
+  stopCommand() {
+    if (this.currentProcess) {
+      const { exec } = require('child_process');
+      // this.currentProcess.kill()
+      // process.kill(-this.currentProcess.pid); // kill the process group
+      exec(`taskkill /PID ${this.currentProcess.pid} /T /F`);
+      this.currentProcess = null;
+      this.isProcessing = false;
+      this.currentCommand = null;
+    }
+  }
+
+  /**
+   * Execute command.
+   *
+   * @param {*} command
+   * @returns
+   */
   executeCommand(command) {
     ensureDirSync(logsDir);
     ensureDirSync(screenshotsDir);
 
     const logFile = path.join(logsDir, command.replace(/:/g, '_') + '.log');
     const screenshotsDesDir = path.join(screenshotsDir, command.replace(/:/g, '_'));
+    let logStream = fs.createWriteStream(logFile);
+
+    // Write current time to logStream before running the command
+    const formattedDate = dayjs().format('YYYY/MM/DD - H:m:s');
+    logStream.write(`Started at: ${formattedDate}\n`);
 
     return new Promise((resolve, reject) => {
-      const { exec } = require('child_process');
-      exec(`npm run ${command} > "${logFile}"`, (error, stdout, stderr) => {
-        // Remove destination screenshot folder if it exists, then move
-        exec(`rm -rf ${screenshotsDesDir}`, (err) => {
+      this.currentProcess = spawn('npm', ['run', command], {
+        cwd: process.cwd(), // or your desired directory
+        shell: true
+      });
+      // this.currentProcess.stdout.on('data', (data) => {
+      //   console.log(`stdout: ${data}`)
+      // })
+      this.currentProcess.stdout.pipe(logStream)
+      this.currentProcess.stderr.pipe(logStream)
+
+      this.currentProcess.on('close', (code) => {
+        logStream.end();
+        // Copy screentshot folder to result.
+        exec(`rm -rf ${screenshotsDesDir} && cp -r ${screenshotSrcDir} ${screenshotsDesDir}`, (err) => {
           if (err) {
             return reject(err);
           }
-          exec(`cp -r ${screenshotSrcDir} ${screenshotsDesDir}`, (err) => {
-            if (err) {
-              return reject(err);
-            }
-            resolve({ stdout, stderr });
-          });
+          // resolve({ stderr });
         });
-        if (error) {
-          return reject(error);
-        }
+
+        resolve({ code });
+        this.currentProcess = null;
+        logStream = null;
+      });
+
+      this.currentProcess.stderr.on('error', (err) => {
+        logStream.end();
+        reject(err);
+        this.currentProcess = null;
+        logStream = null;
       });
     });
   }
@@ -86,7 +172,6 @@ class CommandService {
     this.executeCommand(command)
       .then(result => {
         this.isProcessing = false;
-        this.commandQueue.length === 0 ? this.executedCount = 0 : this.executedCount++;
         this.currentCommand = null;
         resolve(result);
         this.processQueue();
@@ -99,12 +184,17 @@ class CommandService {
       });
   }
 
-  progressInfo() {
-    return {
-      queueLength: this.commandQueue.length,
-      executedCount: this.executedCount,
-      runningCommand: this.currentCommand
-    }
+  openCypress() {
+    return new Promise((resolve, reject) => {
+      const { exec } = require('child_process');
+      exec(`npx cypress open --e2e --browser electron`, (error, stdout, stderr) => {
+        if (error) {
+          return reject(error);
+        }
+        // When Cypress is closed, resolve with stopped: true
+        resolve({ stopped: true });
+      });
+    });
   }
 }
 

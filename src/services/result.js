@@ -46,22 +46,6 @@ class ResultService {
     }
   }
 
-  async removeAllLogs() {
-    try {
-      return await fs.promises.rm(logsDir, { recursive: true, force: true });
-    } catch (error) {
-      return false;
-    }
-  }
-
-  async removeAllScreenshots() {
-    try {
-      return await fs.promises.rm(screenshotsDir, { recursive: true, force: true });
-    } catch (error) {
-      return false;
-    }
-  }
-
   async removeResults() {
     try {
       return await fs.promises.rm(resultsDir, { recursive: true, force: true });
