@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const { exec, spawn } = require('child_process');
+const dayjs = require('dayjs');
 const {
   packageJson,
   logsDir,
@@ -10,7 +12,6 @@ const {
   ensureDirSync,
 } = require('../utils/util');
 const packageJsonData = require(packageJson);
-const { exec, spawn } = require('child_process');
 
 class CommandService {
 
@@ -123,6 +124,10 @@ class CommandService {
     const logFile = path.join(logsDir, command.replace(/:/g, '_') + '.log');
     const screenshotsDesDir = path.join(screenshotsDir, command.replace(/:/g, '_'));
     let logStream = fs.createWriteStream(logFile);
+
+    // Write current time to logStream before running the command
+    const formattedDate = dayjs().format('YYYY/MM/DD - H:m:s');
+    logStream.write(`Started at: ${formattedDate}\n`);
 
     return new Promise((resolve, reject) => {
       this.currentProcess = spawn('npm', ['run', command], {
